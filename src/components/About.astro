@@ -1,0 +1,98 @@
+---
+import type { Profile } from "../types";
+
+interface Props {
+  profile: Profile | null;
+}
+
+const { profile } = Astro.props;
+
+// Extract a brief bio from the README (first paragraph after any badges/images)
+function extractBio(readme: string): string {
+  if (!readme) return "";
+
+  // Remove badges and images at the start
+  const lines = readme.split("\n");
+  let startIndex = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    // Skip empty lines, badges, images, and headings at the start
+    if (
+      !line ||
+      line.startsWith("![") ||
+      line.startsWith("<img") ||
+      line.startsWith("<p") ||
+      line.startsWith("<div") ||
+      line.startsWith("<!--") ||
+      line.startsWith("#")
+    ) {
+      startIndex = i + 1;
+      continue;
+    }
+    // Found actual content
+    break;
+  }
+
+  // Get first meaningful paragraph
+  const contentLines = lines.slice(startIndex);
+  const paragraphs = contentLines.join("\n").split(/\n\n+/);
+
+  for (const para of paragraphs) {
+    const cleaned = para
+      .trim()
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // Remove images
+      .replace(/<[^>]+>/g, "") // Remove HTML tags
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Convert links to text
+      .replace(/[*_~`]/g, "") // Remove markdown formatting
+      .trim();
+
+    if (cleaned.length > 50) {
+      // Return first 2-3 sentences or 300 chars
+      const sentences = cleaned.match(/[^.!?]+[.!?]+/g);
+      if (sentences && sentences.length > 2) {
+        return sentences.slice(0, 3).join(" ").trim();
+      }
+      return cleaned.slice(0, 300) + (cleaned.length > 300 ? "..." : "");
+    }
+  }
+
+  return "";
+}
+
+const bio = profile ? extractBio(profile.readme) : null;
+---
+
+{
+  bio && (
+    <div class="mt-24 rounded-4xl bg-neutral-950 py-24 sm:mt-32 lg:mt-40 lg:py-32">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl lg:max-w-none">
+          <div class="max-w-3xl">
+            <h2 class="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
+              About
+            </h2>
+            <p class="mt-6 text-xl text-neutral-300">{bio}</p>
+            <div class="mt-8 flex gap-4">
+              <a
+                href={`https://github.com/${profile.username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-neutral-950 transition-colors hover:bg-neutral-200"
+              >
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                View GitHub Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

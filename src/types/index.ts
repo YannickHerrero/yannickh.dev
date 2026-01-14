@@ -110,3 +110,23 @@ export interface SortConfig {
   by: SortOption;
   direction: SortDirection;
 }
+
+/**
+ * GitHub profile data fetched from profile README
+ */
+export interface Profile {
+  /** GitHub username */
+  username: string;
+  /** Raw README markdown content */
+  readme: string;
+  /** ISO date string when profile was fetched */
+  fetchedAt: string;
+}
+
+/**
+ * Structure of the generated profile.json file
+ */
+export interface ProfileIndex {
+  profile: Profile | null;
+  fetchedAt: string;
+}

@@ -1,14 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import SectionIntro from "../components/SectionIntro.astro";
+import About from "../components/About.astro";
 import ProjectCatalog from "../components/react/ProjectCatalog";
-import type { ProjectsIndex } from "../types";
+import type { ProjectsIndex, ProfileIndex } from "../types";
 
-// Import generated projects data
+// Import generated data
 let projectsData: ProjectsIndex;
+let profileData: ProfileIndex;
+
 try {
   projectsData = await import("../generated/projects.json");
 } catch {
-  // Fallback for when projects.json doesn't exist yet
   projectsData = {
     projects: [],
     allTags: [],
@@ -16,20 +20,51 @@ try {
   };
 }
 
-const { projects, generatedAt } = projectsData;
+try {
+  profileData = await import("../generated/profile.json");
+} catch {
+  profileData = {
+    profile: null,
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
+const { projects } = projectsData;
+const { profile } = profileData;
 ---
 
 <BaseLayout title="Home">
-  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- Project Catalog with integrated hero -->
+  <!-- Hero Section -->
+  <Container class="mt-24 sm:mt-32 md:mt-56">
+    <div class="max-w-3xl">
+      <h1
+        class="font-display text-5xl font-medium tracking-tight text-balance text-neutral-950 sm:text-7xl"
+      >
+        Hi, I'm Yannick Herrero.
+      </h1>
+      <p class="mt-6 text-xl text-neutral-600">
+        Developer building for mobile & web.
+      </p>
+    </div>
+  </Container>
+
+  <!-- Projects Section -->
+  <Container class="mt-24 sm:mt-32 lg:mt-40">
     {
       projects.length > 0 ? (
-        <ProjectCatalog client:load projects={projects} />
+        <>
+          <SectionIntro title="Projects">
+            <p>A collection of my open source work.</p>
+          </SectionIntro>
+          <div class="mt-16">
+            <ProjectCatalog client:load projects={projects} />
+          </div>
+        </>
       ) : (
-        <div class="bento-card mx-auto max-w-lg p-12 text-center">
-          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
+        <div class="mx-auto max-w-lg rounded-3xl bg-neutral-50 p-12 text-center">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
             <svg
-              class="h-6 w-6 text-white/30"
+              class="h-6 w-6 text-neutral-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -42,32 +77,24 @@ const { projects, generatedAt } = projectsData;
               />
             </svg>
           </div>
-          <h3 class="mt-4 text-lg font-medium text-white">No projects yet</h3>
-          <p class="mt-2 text-sm text-white/40">
+          <h3 class="mt-4 text-lg font-semibold text-neutral-950">
+            No projects yet
+          </h3>
+          <p class="mt-2 text-sm text-neutral-600">
             Run{" "}
-            <code class="rounded-md bg-white/5 px-2 py-0.5 font-mono text-xs text-white/60">
+            <code class="rounded-md bg-neutral-100 px-2 py-0.5 font-mono text-xs text-neutral-700">
               bun run sync:github
             </code>{" "}
             to fetch projects from GitHub.
           </p>
-          <p class="mt-2 text-sm text-white/40">
-            Make sure to add repositories to{" "}
-            <code class="rounded-md bg-white/5 px-2 py-0.5 font-mono text-xs text-white/60">
-              repos.config.ts
-            </code>{" "}
-            first.
-          </p>
         </div>
       )
     }
+  </Container>
 
-    <!-- Last synced info -->
-    {
-      projects.length > 0 && (
-        <p class="mt-12 text-center text-xs text-white/20">
-          Last synced: {new Date(generatedAt).toLocaleString()}
-        </p>
-      )
-    }
-  </div>
+  <!-- About Section (from GitHub profile) -->
+  <About profile={profile} />
+
+  <!-- Spacer before footer -->
+  <div class="mt-24 sm:mt-32 lg:mt-40"></div>
 </BaseLayout>

@@ -24,6 +24,8 @@ import type {
   GitHubTopicsResponse,
   GitHubReadmeResponse,
   CacheEntry,
+  Profile,
+  ProfileIndex,
 } from "../src/types";
 
 // Configuration
@@ -486,6 +488,21 @@ async function main() {
     await writeFile(join(CONTENT_DIR, `${project.slug}.md`), content);
   }
 
+  // Fetch profile README (from first repo owner, assumed to be the user)
+  const profileUsername = repos[0]?.owner || "YannickHerrero";
+  const profile = await fetchProfileReadme(profileUsername);
+
+  // Generate profile.json
+  const profileIndex: ProfileIndex = {
+    profile,
+    fetchedAt: new Date().toISOString(),
+  };
+
+  await writeFile(
+    join(GENERATED_DIR, "profile.json"),
+    JSON.stringify(profileIndex, null, 2)
+  );
+
   // Print summary
   console.log("\n" + "=".repeat(60));
   console.log("Sync Complete");
@@ -494,14 +511,55 @@ async function main() {
   console.log(`  Failed:     ${failCount}`);
   console.log(`  Cache hits: ${cacheHitCount}`);
   console.log(`  Tags:       ${allTags.length}`);
+  console.log(`  Profile:    ${profile ? "OK" : "Not found"}`);
   console.log(`\n  Generated:`);
   console.log(`    - ${GENERATED_DIR}/projects.json`);
+  console.log(`    - ${GENERATED_DIR}/profile.json`);
   console.log(`    - ${CONTENT_DIR}/*.md (${successfulResults.length} files)`);
   console.log("");
 
   // Exit with error if any failed
   if (failCount > 0) {
     process.exit(1);
+  }
+}
+
+/**
+ * Fetch GitHub profile README
+ */
+async function fetchProfileReadme(username: string): Promise<Profile | null> {
+  console.log(`[*] Fetching profile README for ${username}...`);
+
+  try {
+    // Profile READMEs are in a repo named same as username
+    const readmeResult = await githubFetch<GitHubReadmeResponse>(
+      `/repos/${username}/${username}/readme`
+    );
+
+    if (readmeResult.data) {
+      const rawReadme = Buffer.from(
+        readmeResult.data.content,
+        "base64"
+      ).toString("utf-8");
+
+      // Rewrite URLs to point to GitHub
+      const readme = rewriteReadmeUrls(rawReadme, username, username, "main");
+
+      console.log(`    OK (${readme.length} chars)`);
+
+      return {
+        username,
+        readme,
+        fetchedAt: new Date().toISOString(),
+      };
+    }
+
+    console.log(`    No profile README found`);
+    return null;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.log(`    SKIPPED: ${message}`);
+    return null;
   }
 }
 
