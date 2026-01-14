@@ -7,71 +7,47 @@ interface Props {
 
 const { profile } = Astro.props;
 
-// Extract a brief bio from the README (first paragraph after any badges/images)
-function extractBio(readme: string): string {
-  if (!readme) return "";
+// Convert markdown to basic HTML for display
+function markdownToHtml(markdown: string): string {
+  if (!markdown) return "";
 
-  // Remove badges and images at the start
-  const lines = readme.split("\n");
-  let startIndex = 0;
+  let html = markdown
+    // Convert bold **text** or __text__
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/__([^_]+)__/g, "<strong>$1</strong>")
+    // Convert italic *text* or _text_
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/_([^_]+)_/g, "<em>$1</em>")
+    // Convert links [text](url)
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-white underline decoration-neutral-500 underline-offset-2 transition-colors hover:decoration-white">$1</a>'
+    )
+    // Convert line breaks to paragraphs
+    .split(/\n\n+/)
+    .map((para) => para.trim())
+    .filter((para) => para.length > 0)
+    .map((para) => `<p>${para.replace(/\n/g, "<br>")}</p>`)
+    .join("");
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    // Skip empty lines, badges, images, and headings at the start
-    if (
-      !line ||
-      line.startsWith("![") ||
-      line.startsWith("<img") ||
-      line.startsWith("<p") ||
-      line.startsWith("<div") ||
-      line.startsWith("<!--") ||
-      line.startsWith("#")
-    ) {
-      startIndex = i + 1;
-      continue;
-    }
-    // Found actual content
-    break;
-  }
-
-  // Get first meaningful paragraph
-  const contentLines = lines.slice(startIndex);
-  const paragraphs = contentLines.join("\n").split(/\n\n+/);
-
-  for (const para of paragraphs) {
-    const cleaned = para
-      .trim()
-      .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // Remove images
-      .replace(/<[^>]+>/g, "") // Remove HTML tags
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Convert links to text
-      .replace(/[*_~`]/g, "") // Remove markdown formatting
-      .trim();
-
-    if (cleaned.length > 50) {
-      // Return first 2-3 sentences or 300 chars
-      const sentences = cleaned.match(/[^.!?]+[.!?]+/g);
-      if (sentences && sentences.length > 2) {
-        return sentences.slice(0, 3).join(" ").trim();
-      }
-      return cleaned.slice(0, 300) + (cleaned.length > 300 ? "..." : "");
-    }
-  }
-
-  return "";
+  return html;
 }
 
-const bio = profile ? extractBio(profile.readme) : null;
+const readmeHtml = profile ? markdownToHtml(profile.readme) : null;
 ---
 
 {
-  bio && (
+  profile && readmeHtml && (
     <div class="mx-auto mt-24 max-w-7xl px-6 sm:mt-32 lg:mt-40 lg:px-8">
       <div class="rounded-4xl bg-neutral-950 px-6 py-20 sm:px-12 sm:py-24 lg:px-16">
         <div class="max-w-3xl">
           <h2 class="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
             About
           </h2>
-          <p class="mt-6 text-xl text-neutral-300">{bio}</p>
+          <div
+            class="mt-6 space-y-4 text-xl text-neutral-300 [&>p]:leading-relaxed"
+            set:html={readmeHtml}
+          />
           <div class="mt-8 flex gap-4">
             <a
               href={`https://github.com/${profile.username}`}
