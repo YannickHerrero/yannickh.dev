@@ -1,0 +1,81 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProjectCatalog from "../components/react/ProjectCatalog";
+import type { ProjectsIndex } from "../types";
+
+// Import generated projects data
+let projectsData: ProjectsIndex;
+try {
+  projectsData = await import("../generated/projects.json");
+} catch {
+  // Fallback for when projects.json doesn't exist yet
+  projectsData = {
+    projects: [],
+    allTags: [],
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+const { projects, allTags, generatedAt } = projectsData;
+
+// Get initial tag from URL query
+const initialTag = Astro.url.searchParams.get("tag") || undefined;
+---
+
+<BaseLayout title="Home">
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Project Catalog with integrated hero -->
+    {
+      projects.length > 0 ? (
+        <ProjectCatalog
+          client:load
+          projects={projects}
+          allTags={allTags}
+          initialTag={initialTag}
+        />
+      ) : (
+        <div class="bento-card mx-auto max-w-lg p-12 text-center">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
+            <svg
+              class="h-6 w-6 text-white/30"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+              />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-medium text-white">No projects yet</h3>
+          <p class="mt-2 text-sm text-white/40">
+            Run{" "}
+            <code class="rounded-md bg-white/5 px-2 py-0.5 font-mono text-xs text-white/60">
+              bun run sync:github
+            </code>{" "}
+            to fetch projects from GitHub.
+          </p>
+          <p class="mt-2 text-sm text-white/40">
+            Make sure to add repositories to{" "}
+            <code class="rounded-md bg-white/5 px-2 py-0.5 font-mono text-xs text-white/60">
+              repos.config.ts
+            </code>{" "}
+            first.
+          </p>
+        </div>
+      )
+    }
+
+    <!-- Last synced info -->
+    {
+      projects.length > 0 && (
+        <p class="mt-12 text-center text-xs text-white/20">
+          Last synced: {new Date(generatedAt).toLocaleString()}
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>

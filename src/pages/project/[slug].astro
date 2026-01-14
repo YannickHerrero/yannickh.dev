@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+import type { Project } from "../../types";
+
+export async function getStaticPaths() {
+  let projects;
+  try {
+    projects = await getCollection("projects");
+  } catch {
+    // Return empty paths if collection doesn't exist yet
+    return [];
+  }
+
+  return projects.map((project) => {
+    // project.id in Astro content collections is the filename without extension
+    // For glob loader it might include extension, so we strip it to be safe
+    const slug = project.id.replace(/\.md$/, "");
+    return {
+      params: { slug },
+      props: { project, slug },
+    };
+  });
+}
+
+const { project, slug } = Astro.props;
+const { Content } = await project.render();
+
+// Convert Astro content collection data to our Project type
+// Use the cleaned slug (derived from filename without extension)
+const projectData: Project = {
+  slug,
+  title: project.data.title,
+  description: project.data.description,
+  owner: project.data.owner,
+  repo: project.data.repo,
+  tags: project.data.tags,
+  stars: project.data.stars,
+  updatedAt: project.data.updatedAt,
+  homepage: project.data.homepage,
+  htmlUrl: project.data.htmlUrl,
+  defaultBranch: project.data.defaultBranch,
+  featured: project.data.featured,
+};
+---
+
+<ProjectLayout project={projectData}>
+  <Content />
+</ProjectLayout>
