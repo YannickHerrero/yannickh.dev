@@ -3,12 +3,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
 import SectionIntro from "../components/SectionIntro.astro";
 import About from "../components/About.astro";
+import GitHubHeatmap from "../components/GitHubHeatmap.astro";
 import ProjectCatalog from "../components/react/ProjectCatalog";
-import type { ProjectsIndex, ProfileIndex } from "../types";
+import type { ProjectsIndex, ProfileIndex, ContributionsIndex } from "../types";
 
 // Import generated data
 let projectsData: ProjectsIndex;
 let profileData: ProfileIndex;
+let contributionsData: ContributionsIndex | null;
 
 try {
   projectsData = await import("../generated/projects.json");
@@ -27,6 +29,12 @@ try {
     profile: null,
     fetchedAt: new Date().toISOString(),
   };
+}
+
+try {
+  contributionsData = await import("../generated/contributions.json");
+} catch {
+  contributionsData = null;
 }
 
 const { projects } = projectsData;
@@ -90,6 +98,16 @@ const { profile } = profileData;
         </div>
       )
     }
+  </Container>
+
+  <!-- Activity Section -->
+  <Container class="mt-24 sm:mt-32 lg:mt-40">
+    <SectionIntro title="Activity">
+      <p>My contribution activity over the past year.</p>
+    </SectionIntro>
+    <div class="mt-16">
+      <GitHubHeatmap contributions={contributionsData} />
+    </div>
   </Container>
 
   <!-- About Section (from GitHub profile) -->

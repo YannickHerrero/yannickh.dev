@@ -26,6 +26,8 @@ import type {
   CacheEntry,
   Profile,
   ProfileIndex,
+  ContributionDay,
+  ContributionsIndex,
 } from "../src/types";
 
 // Configuration
@@ -36,8 +38,9 @@ const CACHE_DIR = ".cache/repos";
 const GENERATED_DIR = "src/generated";
 const CONTENT_DIR = "src/content/projects";
 
-// GitHub API base URL
+// GitHub API base URLs
 const GITHUB_API = "https://api.github.com";
+const GITHUB_GRAPHQL_API = "https://api.github.com/graphql";
 
 // Get token from environment
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -503,6 +506,17 @@ async function main() {
     JSON.stringify(profileIndex, null, 2)
   );
 
+  // Fetch contribution data
+  const contributions = await fetchContributions(profileUsername);
+
+  // Generate contributions.json
+  if (contributions) {
+    await writeFile(
+      join(GENERATED_DIR, "contributions.json"),
+      JSON.stringify(contributions, null, 2)
+    );
+  }
+
   // Print summary
   console.log("\n" + "=".repeat(60));
   console.log("Sync Complete");
@@ -512,15 +526,122 @@ async function main() {
   console.log(`  Cache hits: ${cacheHitCount}`);
   console.log(`  Tags:       ${allTags.length}`);
   console.log(`  Profile:    ${profile ? "OK" : "Not found"}`);
+  console.log(
+    `  Contributions: ${contributions ? `${contributions.totalContributions} total` : "Not found"}`
+  );
   console.log(`\n  Generated:`);
   console.log(`    - ${GENERATED_DIR}/projects.json`);
   console.log(`    - ${GENERATED_DIR}/profile.json`);
+  if (contributions) {
+    console.log(`    - ${GENERATED_DIR}/contributions.json`);
+  }
   console.log(`    - ${CONTENT_DIR}/*.md (${successfulResults.length} files)`);
   console.log("");
 
   // Exit with error if any failed
   if (failCount > 0) {
     process.exit(1);
+  }
+}
+
+/**
+ * Fetch GitHub contribution data using GraphQL API
+ */
+async function fetchContributions(
+  username: string
+): Promise<ContributionsIndex | null> {
+  console.log(`[*] Fetching contributions for ${username}...`);
+
+  if (!GITHUB_TOKEN) {
+    console.log(`    SKIPPED: GITHUB_TOKEN required for contribution data`);
+    return null;
+  }
+
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        contributionsCollection {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+                contributionLevel
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(GITHUB_GRAPHQL_API, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        "Content-Type": "application/json",
+        "User-Agent": "project-catalog-sync",
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(result.errors[0]?.message || "GraphQL error");
+    }
+
+    const calendar =
+      result.data?.user?.contributionsCollection?.contributionCalendar;
+
+    if (!calendar) {
+      console.log(`    No contribution data found`);
+      return null;
+    }
+
+    // Flatten weeks into days and map contribution levels
+    const levelMap: Record<string, 0 | 1 | 2 | 3 | 4> = {
+      NONE: 0,
+      FIRST_QUARTILE: 1,
+      SECOND_QUARTILE: 2,
+      THIRD_QUARTILE: 3,
+      FOURTH_QUARTILE: 4,
+    };
+
+    const contributions: ContributionDay[] = [];
+    for (const week of calendar.weeks) {
+      for (const day of week.contributionDays) {
+        contributions.push({
+          date: day.date,
+          count: day.contributionCount,
+          level: levelMap[day.contributionLevel] ?? 0,
+        });
+      }
+    }
+
+    console.log(
+      `    OK (${calendar.totalContributions} contributions, ${contributions.length} days)`
+    );
+
+    return {
+      contributions,
+      totalContributions: calendar.totalContributions,
+      username,
+      fetchedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.log(`    SKIPPED: ${message}`);
+    return null;
   }
 }
 

@@ -130,3 +130,29 @@ export interface ProfileIndex {
   profile: Profile | null;
   fetchedAt: string;
 }
+
+/**
+ * GitHub contribution data for a single day
+ */
+export interface ContributionDay {
+  /** Date in YYYY-MM-DD format */
+  date: string;
+  /** Number of contributions on this day */
+  count: number;
+  /** GitHub's intensity level (0-4) */
+  level: 0 | 1 | 2 | 3 | 4;
+}
+
+/**
+ * Structure of the generated contributions.json file
+ */
+export interface ContributionsIndex {
+  /** Array of contribution days for the past year */
+  contributions: ContributionDay[];
+  /** Total contributions in the past year */
+  totalContributions: number;
+  /** GitHub username */
+  username: string;
+  /** ISO date string when contributions were fetched */
+  fetchedAt: string;
+}
