@@ -16,10 +16,7 @@ try {
   };
 }
 
-const { projects, allTags, generatedAt } = projectsData;
-
-// Get initial tag from URL query
-const initialTag = Astro.url.searchParams.get("tag") || undefined;
+const { projects, generatedAt } = projectsData;
 ---
 
 <BaseLayout title="Home">
@@ -27,12 +24,7 @@ const initialTag = Astro.url.searchParams.get("tag") || undefined;
     <!-- Project Catalog with integrated hero -->
     {
       projects.length > 0 ? (
-        <ProjectCatalog
-          client:load
-          projects={projects}
-          allTags={allTags}
-          initialTag={initialTag}
-        />
+        <ProjectCatalog client:load projects={projects} />
       ) : (
         <div class="bento-card mx-auto max-w-lg p-12 text-center">
           <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/5">

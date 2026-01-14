@@ -4,21 +4,7 @@ import type { Project } from "../../types";
 
 interface ProjectCatalogProps {
   projects: Project[];
-  allTags: string[];
-  initialTag?: string;
 }
-
-// Format date for display (used in tooltips/hover states)
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-// Suppress unused warning - kept for future use
-void formatDate;
 
 function formatStars(stars: number): string {
   if (stars >= 1000) {
@@ -44,16 +30,8 @@ function getCardVariant(
   return "standard";
 }
 
-export default function ProjectCatalog({
-  projects,
-  allTags,
-  initialTag,
-}: ProjectCatalogProps) {
+export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(
-    initialTag ? new Set([initialTag]) : new Set()
-  );
-  const [showAllTags, setShowAllTags] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Listen to header search input
@@ -117,13 +95,6 @@ export default function ProjectCatalog({
       results = fuse.search(searchQuery).map((r) => r.item);
     }
 
-    // Apply tag filter
-    if (selectedTags.size > 0) {
-      results = results.filter((p) =>
-        [...selectedTags].every((tag) => p.tags.includes(tag))
-      );
-    }
-
     // Sort results - featured first, then by stars descending
     results = [...results].sort((a, b) => {
       // Featured always first
@@ -135,26 +106,11 @@ export default function ProjectCatalog({
     });
 
     return results;
-  }, [projects, searchQuery, selectedTags, fuse]);
+  }, [projects, searchQuery, fuse]);
 
-  // Toggle tag selection
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tag)) {
-        next.delete(tag);
-      } else {
-        next.add(tag);
-      }
-      return next;
-    });
-  };
-
-  // Clear all filters
-  const clearFilters = () => {
+  // Clear search
+  const clearSearch = () => {
     setSearchQuery("");
-    setSelectedTags(new Set());
-    // Also clear header search input
     const headerSearch = document.getElementById(
       "header-search"
     ) as HTMLInputElement | null;
@@ -162,23 +118,6 @@ export default function ProjectCatalog({
       headerSearch.value = "";
     }
   };
-
-  // Update URL when tag changes
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (selectedTags.size === 1) {
-      params.set("tag", [...selectedTags][0]);
-    } else {
-      params.delete("tag");
-    }
-    const newUrl = params.toString()
-      ? `${window.location.pathname}?${params}`
-      : window.location.pathname;
-    window.history.replaceState({}, "", newUrl);
-  }, [selectedTags]);
-
-  const displayedTags = showAllTags ? allTags : allTags.slice(0, 12);
-  const hasActiveFilters = searchQuery || selectedTags.size > 0;
 
   // Separate featured project from others for the hero card
   const featuredProject = filteredProjects.find((p) => p.featured);
@@ -208,44 +147,6 @@ export default function ProjectCatalog({
         </div>
       </div>
 
-      {/* Tag Filters */}
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-2">
-          {displayedTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => toggleTag(tag)}
-              className={`tag cursor-pointer ${selectedTags.has(tag) ? "tag-selected" : ""}`}
-            >
-              {tag}
-            </button>
-          ))}
-          {allTags.length > 12 && (
-            <button
-              onClick={() => setShowAllTags(!showAllTags)}
-              className="px-3 py-1 text-xs text-white/40 transition-colors hover:text-white/60"
-            >
-              {showAllTags ? "Show less" : `+${allTags.length - 12} more`}
-            </button>
-          )}
-        </div>
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-xs text-white/40 transition-colors hover:text-white/60"
-          >
-            Clear all filters
-          </button>
-        )}
-      </div>
-
-      {/* Results Count */}
-      <p className="text-sm text-white/40">
-        {filteredProjects.length === projects.length
-          ? `${projects.length} projects`
-          : `Showing ${filteredProjects.length} of ${projects.length} projects`}
-      </p>
-
       {/* Bento Grid */}
       {filteredProjects.length > 0 ? (
         <div
@@ -271,6 +172,24 @@ export default function ProjectCatalog({
                     {featuredProject.description}
                   </p>
                 )}
+                {/* Tags */}
+                {featuredProject.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {featuredProject.tags.slice(0, 5).map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/60"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {featuredProject.tags.length > 5 && (
+                      <span className="inline-flex items-center px-2 py-1 text-xs text-white/40">
+                        +{featuredProject.tags.length - 5} more
+                      </span>
+                    )}
+                  </div>
+                )}
                 {/* Meta info */}
                 <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-white/40">
                   <span className="flex items-center gap-1.5">
@@ -295,6 +214,7 @@ export default function ProjectCatalog({
           {otherProjects.map((project, index) => {
             const variant = getCardVariant(index, !!featuredProject);
             const isTall = variant === "tall";
+            const maxTags = isTall ? 4 : 3;
 
             return (
               <a
@@ -319,6 +239,24 @@ export default function ProjectCatalog({
                     >
                       {project.description}
                     </p>
+                  )}
+                  {/* Tags */}
+                  {project.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tags.slice(0, maxTags).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/60"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {project.tags.length > maxTags && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-xs text-white/40">
+                          +{project.tags.length - maxTags}
+                        </span>
+                      )}
+                    </div>
                   )}
                   {/* Meta info */}
                   <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-white/40">
@@ -362,13 +300,13 @@ export default function ProjectCatalog({
             No projects found
           </h3>
           <p className="mt-2 text-sm text-white/40">
-            Try adjusting your search or filter criteria.
+            Try adjusting your search query.
           </p>
           <button
-            onClick={clearFilters}
+            onClick={clearSearch}
             className="mt-4 text-sm text-white/50 transition-colors hover:text-white"
           >
-            Clear all filters
+            Clear search
           </button>
         </div>
       )}
