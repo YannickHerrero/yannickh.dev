@@ -131,7 +131,7 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
       <div className="mb-8">
         <div className="flex max-w-3xl flex-col gap-4">
           {/* Subtitle */}
-          <p className="text-lg font-medium text-[#EBEBF5]">
+          <p className="text-lg font-semibold text-subtext-1">
             {projects.length} Projects{" "}
             <span className="text-accent">Collection</span>
           </p>
@@ -140,7 +140,7 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
             Project Catalog
           </h1>
           {/* Description */}
-          <p className="max-w-2xl text-lg leading-relaxed text-[#EBEBF5] sm:text-xl">
+          <p className="max-w-2xl text-lg leading-relaxed text-subtext-1 sm:text-xl">
             A curated collection of open source projects. Discover tools,
             libraries, and applications built with modern technologies.
           </p>
@@ -163,12 +163,12 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
               {/* Content */}
               <div className="relative z-10 flex flex-1 flex-col gap-4">
                 {/* Title */}
-                <h3 className="text-3xl font-bold text-accent sm:text-4xl">
+                <h3 className="text-3xl font-extrabold text-accent sm:text-4xl">
                   {featuredProject.title}
                 </h3>
                 {/* Description */}
                 {featuredProject.description && (
-                  <p className="line-clamp-3 max-w-xl text-lg leading-relaxed text-[#EBEBF5]">
+                  <p className="line-clamp-3 max-w-xl text-lg leading-relaxed text-subtext-1">
                     {featuredProject.description}
                   </p>
                 )}
@@ -178,20 +178,20 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
                     {featuredProject.tags.slice(0, 5).map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/60"
+                        className="inline-flex items-center rounded-full border border-overlay-0/30 bg-surface-0/50 px-3 py-1 text-xs font-bold text-subtext-1"
                       >
                         {tag}
                       </span>
                     ))}
                     {featuredProject.tags.length > 5 && (
-                      <span className="inline-flex items-center px-2 py-1 text-xs text-white/40">
+                      <span className="inline-flex items-center px-2 py-1 text-xs text-subtext-0">
                         +{featuredProject.tags.length - 5} more
                       </span>
                     )}
                   </div>
                 )}
                 {/* Meta info */}
-                <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-white/40">
+                <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-subtext-0">
                   <span className="flex items-center gap-1.5">
                     <svg
                       className="h-4 w-4"
@@ -228,14 +228,14 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
                 <div className="relative z-10 flex flex-1 flex-col gap-3">
                   {/* Title */}
                   <h3
-                    className={`font-bold text-accent ${isTall ? "text-3xl" : "text-2xl"}`}
+                    className={`font-extrabold text-accent ${isTall ? "text-3xl" : "text-2xl"}`}
                   >
                     {project.title}
                   </h3>
                   {/* Description */}
                   {project.description && (
                     <p
-                      className={`leading-relaxed text-[#EBEBF5] ${isTall ? "line-clamp-4 text-lg" : "line-clamp-3 text-base"}`}
+                      className={`leading-relaxed text-subtext-1 ${isTall ? "line-clamp-4 text-lg" : "line-clamp-3 text-base"}`}
                     >
                       {project.description}
                     </p>
@@ -246,20 +246,20 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
                       {project.tags.slice(0, maxTags).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/60"
+                          className="inline-flex items-center rounded-full border border-overlay-0/30 bg-surface-0/50 px-2.5 py-0.5 text-xs font-bold text-subtext-1"
                         >
                           {tag}
                         </span>
                       ))}
                       {project.tags.length > maxTags && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 text-xs text-white/40">
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-xs text-subtext-0">
                           +{project.tags.length - maxTags}
                         </span>
                       )}
                     </div>
                   )}
                   {/* Meta info */}
-                  <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-white/40">
+                  <div className="mt-auto flex items-center gap-4 pt-4 text-sm text-subtext-0">
                     <span className="flex items-center gap-1.5">
                       <svg
                         className="h-4 w-4"
@@ -281,9 +281,9 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
         </div>
       ) : (
         <div className="bento-card flex flex-col items-center justify-center py-16 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-1">
             <svg
-              className="h-6 w-6 text-white/30"
+              className="h-6 w-6 text-subtext-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -296,15 +296,15 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
               />
             </svg>
           </div>
-          <h3 className="mt-4 text-lg font-medium text-white">
+          <h3 className="mt-4 text-lg font-semibold text-text-light">
             No projects found
           </h3>
-          <p className="mt-2 text-sm text-white/40">
+          <p className="mt-2 text-sm text-subtext-0">
             Try adjusting your search query.
           </p>
           <button
             onClick={clearSearch}
-            className="mt-4 text-sm text-white/50 transition-colors hover:text-white"
+            className="mt-4 text-sm text-subtext-1 transition-colors hover:text-text-light"
           >
             Clear search
           </button>

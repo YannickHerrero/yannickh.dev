@@ -16,11 +16,11 @@ const { title, description = "A curated collection of open source projects" } =
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#24273A" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | Project Catalog</title>
+    <title>{title} | Yannick Herrero</title>
   </head>
-  <body class="min-h-screen bg-surface-dark">
+  <body class="min-h-screen bg-base">
     <!-- Gradient overlay -->
     <div
       class="hero-gradient pointer-events-none fixed inset-0 z-0"
@@ -30,16 +30,16 @@ const { title, description = "A curated collection of open source projects" } =
 
     <div class="relative z-10">
       <header
-        class="sticky top-0 z-50 border-b border-white/[0.05] bg-surface-dark/80 backdrop-blur-xl"
+        class="sticky top-0 z-50 border-b border-overlay-0/20 bg-mantle/80 backdrop-blur-xl"
       >
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between">
             <a href="/" class="group flex items-center gap-3">
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-colors group-hover:bg-white/10"
+                class="flex h-8 w-8 items-center justify-center rounded-lg border border-overlay-0/30 bg-surface-0 transition-colors group-hover:bg-surface-1"
               >
                 <svg
-                  class="h-4 w-4 text-white"
+                  class="h-4 w-4 text-text-light"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -52,7 +52,7 @@ const { title, description = "A curated collection of open source projects" } =
                   ></path>
                 </svg>
               </div>
-              <span class="text-lg font-semibold text-white"
+              <span class="text-lg font-bold text-text-light"
                 >Yannick Herrero</span
               >
             </a>
@@ -60,7 +60,7 @@ const { title, description = "A curated collection of open source projects" } =
               <!-- Search Input -->
               <div class="relative hidden sm:block">
                 <svg
-                  class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30"
+                  class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-overlay-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -76,14 +76,14 @@ const { title, description = "A curated collection of open source projects" } =
                   type="text"
                   id="header-search"
                   placeholder="Search projects..."
-                  class="w-64 rounded-lg border border-white/[0.08] bg-surface py-2 pl-10 pr-4 text-sm text-white transition-all duration-200 placeholder:text-white/30 focus:border-accent/30 focus:bg-[#353537] focus:outline-none"
+                  class="w-64 rounded-lg border border-overlay-0/30 bg-surface-0 py-2 pl-10 pr-4 text-sm text-text transition-all duration-200 placeholder:text-overlay-2 focus:border-accent/50 focus:bg-surface-1 focus:outline-none"
                 />
               </div>
               <a
                 href="https://github.com/YannickHerrero"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex h-9 w-9 items-center justify-center rounded-lg text-white/50 transition-colors hover:bg-white/5 hover:text-white"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-subtext-0 transition-colors hover:bg-surface-0 hover:text-text-light"
               >
                 <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -101,14 +101,15 @@ const { title, description = "A curated collection of open source projects" } =
         <slot />
       </main>
 
-      <footer class="mt-auto border-t border-white/[0.05] py-8">
+      <footer class="mt-auto border-t border-overlay-0/20 py-8">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p class="text-center text-sm text-white/30">
+          <p class="text-center text-sm text-subtext-0">
             Built with <a
               href="https://astro.build"
-              class="text-white/50 transition-colors hover:text-white">Astro</a
+              class="text-subtext-1 transition-colors hover:text-text-light"
+              >Astro</a
             >
-            <span class="mx-2 text-white/20">&middot;</span>
+            <span class="mx-2 text-overlay-0">&middot;</span>
             Data synced from GitHub
           </p>
         </div>

@@ -6,49 +6,85 @@ export default {
   theme: {
     extend: {
       colors: {
-        accent: {
-          DEFAULT: "#B2D7FC",
-          light: "#D0E7FD",
-          dark: "#8AC4FA",
+        // Catppuccin Macchiato - Accent Colors
+        rosewater: "#F4DBD6",
+        flamingo: "#F0C6C6",
+        pink: "#F5BDE6",
+        mauve: "#C6A0F6",
+        red: "#ED8796",
+        maroon: "#EE99A0",
+        peach: "#F5A97F",
+        yellow: "#EED49F",
+        green: "#A6DA95",
+        teal: "#8BD5CA",
+        sky: "#91D7E3",
+        sapphire: "#7DC4E4",
+        blue: "#8AADF4",
+        lavender: "#B7BDF8",
+
+        // Catppuccin Macchiato - Neutral Colors
+        text: {
+          DEFAULT: "#CAD3F5",
+          light: "#DDE3F9",
+        },
+        subtext: {
+          0: "#A5ADCB",
+          1: "#B8C0E0",
+        },
+        overlay: {
+          0: "#6E738D",
+          1: "#8087A2",
+          2: "#939AB7",
         },
         surface: {
-          DEFAULT: "#2C2C2E",
-          dark: "#1C1C1E",
+          0: "#363A4F",
+          1: "#494D64",
+          2: "#5B6078",
+        },
+        base: "#24273A",
+        mantle: "#1E2030",
+        crust: "#181926",
+
+        // Semantic aliases
+        accent: {
+          DEFAULT: "#B7BDF8", // Lavender
+          light: "#CAD0FA",
+          dark: "#A5ABF6",
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Raleway", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "Fira Code", "monospace"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "hero-gradient":
-          "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 255, 255, 0.08), transparent)",
+          "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(183, 189, 248, 0.08), transparent)",
         "card-glow":
-          "radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%)",
+          "radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(183, 189, 248, 0.06), transparent 40%)",
       },
       typography: {
         DEFAULT: {
           css: {
-            "--tw-prose-body": "#a1a1a1",
-            "--tw-prose-headings": "#ffffff",
-            "--tw-prose-lead": "#a1a1a1",
-            "--tw-prose-links": "#ffffff",
-            "--tw-prose-bold": "#ffffff",
-            "--tw-prose-counters": "#888888",
-            "--tw-prose-bullets": "#888888",
-            "--tw-prose-hr": "rgba(255, 255, 255, 0.1)",
-            "--tw-prose-quotes": "#ffffff",
-            "--tw-prose-quote-borders": "rgba(255, 255, 255, 0.2)",
-            "--tw-prose-captions": "#888888",
-            "--tw-prose-code": "#ffffff",
-            "--tw-prose-pre-code": "#a1a1a1",
-            "--tw-prose-pre-bg": "rgba(255, 255, 255, 0.05)",
-            "--tw-prose-th-borders": "rgba(255, 255, 255, 0.1)",
-            "--tw-prose-td-borders": "rgba(255, 255, 255, 0.05)",
+            "--tw-prose-body": "#B8C0E0",
+            "--tw-prose-headings": "#DDE3F9",
+            "--tw-prose-lead": "#B8C0E0",
+            "--tw-prose-links": "#B7BDF8",
+            "--tw-prose-bold": "#DDE3F9",
+            "--tw-prose-counters": "#A5ADCB",
+            "--tw-prose-bullets": "#A5ADCB",
+            "--tw-prose-hr": "rgba(110, 115, 141, 0.5)",
+            "--tw-prose-quotes": "#DDE3F9",
+            "--tw-prose-quote-borders": "rgba(183, 189, 248, 0.3)",
+            "--tw-prose-captions": "#A5ADCB",
+            "--tw-prose-code": "#DDE3F9",
+            "--tw-prose-pre-code": "#B8C0E0",
+            "--tw-prose-pre-bg": "rgba(54, 58, 79, 0.5)",
+            "--tw-prose-th-borders": "rgba(110, 115, 141, 0.5)",
+            "--tw-prose-td-borders": "rgba(110, 115, 141, 0.3)",
             maxWidth: "none",
             code: {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgba(54, 58, 79, 0.8)",
               padding: "0.125rem 0.375rem",
               borderRadius: "0.375rem",
               fontWeight: "400",
@@ -60,22 +96,23 @@ export default {
               content: '""',
             },
             a: {
+              color: "#B7BDF8",
               textDecoration: "underline",
               textUnderlineOffset: "2px",
-              textDecorationColor: "rgba(255, 255, 255, 0.3)",
+              textDecorationColor: "rgba(183, 189, 248, 0.3)",
               "&:hover": {
-                textDecorationColor: "rgba(255, 255, 255, 0.6)",
+                textDecorationColor: "rgba(183, 189, 248, 0.6)",
               },
             },
             pre: {
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgba(54, 58, 79, 0.5)",
+              border: "1px solid rgba(110, 115, 141, 0.3)",
             },
             thead: {
-              borderBottomColor: "rgba(255, 255, 255, 0.1)",
+              borderBottomColor: "rgba(110, 115, 141, 0.5)",
             },
             "tbody tr": {
-              borderBottomColor: "rgba(255, 255, 255, 0.05)",
+              borderBottomColor: "rgba(110, 115, 141, 0.3)",
             },
           },
         },
