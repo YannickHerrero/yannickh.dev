@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -10,122 +10,100 @@
   }
 
   body {
-    @apply bg-base text-text antialiased;
-    font-family: "Raleway", system-ui, sans-serif;
+    @apply bg-white text-neutral-950 antialiased;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   }
 }
 
 @layer components {
-  /* Tags - monochrome surface colors */
+  /* Container - Studio style */
+  .container-studio {
+    @apply mx-auto max-w-7xl px-6 lg:px-8;
+  }
+
+  /* Tags - Studio style pill */
   .tag {
-    @apply inline-flex items-center rounded-full border border-overlay-0/30 bg-surface-0/50 px-3 py-1 text-xs font-bold text-subtext-1 transition-all duration-200 hover:bg-surface-1 hover:text-text;
+    @apply inline-flex items-center rounded-full bg-neutral-100 px-4 py-1.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-200;
   }
 
-  .tag-selected {
-    @apply border-accent bg-accent text-base hover:bg-accent-light hover:text-base;
-  }
-
-  /* Buttons */
+  /* Buttons - Studio style */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:ring-offset-2 focus:ring-offset-base;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2;
   }
 
   .btn-primary {
-    @apply bg-accent text-base hover:bg-accent-light;
+    @apply bg-neutral-950 text-white hover:bg-neutral-800;
   }
 
   .btn-secondary {
-    @apply border border-overlay-0/30 bg-surface-0 text-text hover:border-overlay-1 hover:bg-surface-1;
+    @apply bg-white text-neutral-950 ring-1 ring-neutral-950/10 hover:bg-neutral-50;
   }
 
-  /* Bento Card - Catppuccin style */
-  .bento-card {
-    @apply relative overflow-hidden rounded-xl bg-surface-0 p-6 transition-all duration-300 ease-out;
-    box-shadow:
-      0px 4px 8px -2px rgba(24, 25, 38, 0.2),
-      0px 2px 4px -2px rgba(24, 25, 38, 0.1);
+  /* Project Card - Studio style */
+  .project-card {
+    @apply relative flex w-full flex-col rounded-3xl p-6 ring-1 ring-neutral-950/5 transition-colors hover:bg-neutral-50 sm:p-8;
   }
 
-  .bento-card:hover {
-    @apply bg-surface-1;
+  /* Featured card styling */
+  .project-card-featured {
+    @apply bg-neutral-50;
   }
 
-  .bento-card::before {
-    content: "";
-    @apply pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500;
-    background: radial-gradient(
-      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      rgba(183, 189, 248, 0.06),
-      transparent 40%
-    );
+  /* Section spacing */
+  .section-spacing {
+    @apply mt-24 sm:mt-32 lg:mt-40;
   }
 
-  .bento-card:hover::before {
-    @apply opacity-100;
-  }
-
-  /* Featured card glow effect */
-  .bento-featured {
-    @apply shadow-[0_0_60px_-15px_rgba(183,189,248,0.2)];
-  }
-
-  .bento-featured:hover {
-    @apply shadow-[0_0_80px_-15px_rgba(183,189,248,0.25)];
-  }
-
-  /* Hero card - large featured */
-  .bento-hero {
-    @apply min-h-[374px];
-  }
-
-  /* Standard card heights */
-  .bento-standard {
-    @apply min-h-[374px];
-  }
-
-  .bento-tall {
-    @apply min-h-[466px];
-  }
-
-  /* Input fields */
+  /* Input fields - Studio style */
   .input {
-    @apply w-full rounded-xl border border-overlay-0/30 bg-surface-0 px-4 py-3 text-sm text-text transition-all duration-200 placeholder:text-overlay-2 focus:border-accent/50 focus:bg-surface-1 focus:outline-none focus:ring-0;
-  }
-
-  .select {
-    @apply cursor-pointer rounded-xl border border-overlay-0/30 bg-surface-0 px-4 py-3 text-sm text-text transition-all duration-200 focus:border-accent/50 focus:bg-surface-1 focus:outline-none;
+    @apply w-full rounded-full border-0 bg-white px-4 py-2 text-sm text-neutral-950 ring-1 ring-neutral-950/10 transition-all placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950;
   }
 
   /* Card component for project detail */
   .card {
-    @apply rounded-xl bg-surface-0 p-6 transition-all duration-300 hover:bg-surface-1;
-    box-shadow:
-      0px 4px 8px -2px rgba(24, 25, 38, 0.2),
-      0px 2px 4px -2px rgba(24, 25, 38, 0.1);
+    @apply rounded-3xl bg-white p-6 ring-1 ring-neutral-950/5 transition-colors hover:bg-neutral-50 sm:p-8;
+  }
+
+  /* Border decoration - Studio signature element */
+  .border-decoration {
+    @apply relative;
+  }
+
+  .border-decoration::before {
+    content: "";
+    @apply absolute left-0 top-0 h-6 w-px bg-neutral-950;
+  }
+
+  .border-decoration::after {
+    content: "";
+    @apply absolute bottom-0 left-0 top-6 w-px bg-neutral-950/10;
+  }
+
+  /* Border decoration - horizontal variant */
+  .border-decoration-top {
+    @apply relative;
+  }
+
+  .border-decoration-top::before {
+    content: "";
+    @apply absolute left-0 top-0 h-px w-6 bg-neutral-950;
+  }
+
+  .border-decoration-top::after {
+    content: "";
+    @apply absolute left-6 right-0 top-0 h-px bg-neutral-950/10;
   }
 }
 
 @layer utilities {
-  /* Hero gradient background */
-  .hero-gradient {
-    background: radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      rgba(183, 189, 248, 0.08),
-      transparent
-    );
+  /* Font display variation for wider characters */
+  .font-display {
+    font-variation-settings: "wdth" 125;
   }
 
-  /* Subtle grid pattern overlay */
-  .grid-pattern {
-    background-image:
-      linear-gradient(rgba(110, 115, 141, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(110, 115, 141, 0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  /* Text gradient - accent colored */
-  .text-gradient {
-    @apply bg-gradient-to-b from-accent to-accent/70 bg-clip-text text-transparent;
+  /* Text balance for headings */
+  .text-balance {
+    text-wrap: balance;
   }
 
   /* Fade mask for overflow content */
@@ -134,7 +112,7 @@
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - light theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -145,10 +123,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-overlay-0/50 hover:bg-accent/30;
+  @apply rounded-full bg-neutral-300 hover:bg-neutral-400;
 }
 
 /* Selection color */
 ::selection {
-  @apply bg-accent/30 text-text-light;
+  @apply bg-neutral-950/10 text-neutral-950;
 }

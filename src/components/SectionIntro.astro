@@ -1,0 +1,41 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  smaller?: boolean;
+  class?: string;
+}
+
+const { eyebrow, title, smaller = false, class: className } = Astro.props;
+---
+
+<div class:list={["mx-auto max-w-2xl lg:max-w-none", className]}>
+  <div class="max-w-3xl">
+    {
+      eyebrow && (
+        <h2>
+          <span class="block font-display text-base font-semibold text-neutral-950">
+            {eyebrow}
+          </span>
+        </h2>
+      )
+    }
+    <p
+      class:list={[
+        eyebrow
+          ? "mt-6 block font-display tracking-tight text-neutral-950"
+          : "font-display tracking-tight text-neutral-950",
+        smaller
+          ? "text-2xl font-semibold"
+          : "text-4xl font-medium sm:text-5xl",
+      ]}
+      role={eyebrow ? undefined : "heading"}
+      aria-level={eyebrow ? undefined : 2}
+    >
+      {title}
+    </p>
+    <div class="mt-6 text-xl text-neutral-600">
+      <slot />
+    </div>
+  </div>
+</div>
