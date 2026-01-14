@@ -4,6 +4,7 @@ import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
   output: "static",
+  trailingSlash: "never",
   integrations: [react(), tailwind()],
   markdown: {
     shikiConfig: {
