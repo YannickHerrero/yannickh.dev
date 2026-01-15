@@ -509,13 +509,12 @@ async function main() {
   // Fetch contribution data
   const contributions = await fetchContributions(profileUsername);
 
-  // Generate contributions.json
-  if (contributions) {
-    await writeFile(
-      join(GENERATED_DIR, "contributions.json"),
-      JSON.stringify(contributions, null, 2)
-    );
-  }
+  // Generate contributions.json (always create, even if empty, to avoid build errors)
+  const contributionsIndex: ContributionsIndex | null = contributions;
+  await writeFile(
+    join(GENERATED_DIR, "contributions.json"),
+    JSON.stringify(contributionsIndex, null, 2)
+  );
 
   // Print summary
   console.log("\n" + "=".repeat(60));
@@ -532,9 +531,7 @@ async function main() {
   console.log(`\n  Generated:`);
   console.log(`    - ${GENERATED_DIR}/projects.json`);
   console.log(`    - ${GENERATED_DIR}/profile.json`);
-  if (contributions) {
-    console.log(`    - ${GENERATED_DIR}/contributions.json`);
-  }
+  console.log(`    - ${GENERATED_DIR}/contributions.json`);
   console.log(`    - ${CONTENT_DIR}/*.md (${successfulResults.length} files)`);
   console.log("");
 

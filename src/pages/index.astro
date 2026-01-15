@@ -32,7 +32,13 @@ try {
 }
 
 try {
-  contributionsData = await import("../generated/contributions.json");
+  const imported = await import("../generated/contributions.json");
+  // Handle both direct null and default export containing null
+  contributionsData = imported.default ?? imported;
+  // If the file contains null (no contributions), normalize to null
+  if (!contributionsData || !contributionsData.contributions) {
+    contributionsData = null;
+  }
 } catch {
   contributionsData = null;
 }
