@@ -26,29 +26,28 @@ function formatStars(stars: number): string {
 ---
 
 <BaseLayout title={project.title} description={project.description}>
-  <Container class="mt-24 sm:mt-32">
-    <!-- Back link -->
-    <a
-      href="/"
-      class="group mb-8 inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-neutral-700"
-    >
-      <svg
-        class="h-4 w-4 transition-transform group-hover:-translate-x-0.5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="1.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
-      </svg>
-      Back to projects
-    </a>
-
+  <Container class="mt-4">
     <!-- Header Card -->
     <header class="rounded-3xl bg-neutral-50 p-8 sm:p-12">
+      <!-- Back link -->
+      <a
+        href="/"
+        class="group mb-8 inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-neutral-700"
+      >
+        <svg
+          class="h-4 w-4 transition-transform group-hover:-translate-x-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+        </svg>
+        Back to projects
+      </a>
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="flex-1">
           <div class="mb-3 flex items-center gap-3">
