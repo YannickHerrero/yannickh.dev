@@ -138,3 +138,16 @@ html.dark ::-webkit-scrollbar-thumb {
 html.dark ::selection {
   @apply bg-white/20 text-white;
 }
+
+/* Reset code styling inside pre blocks to preserve Shiki syntax highlighting */
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: var(--tw-prose-pre-code);
+}
+
+/* Ensure spans without inline color styles inherit the pre code color */
+.prose pre code span:not([style*="color"]) {
+  color: inherit;
+}
