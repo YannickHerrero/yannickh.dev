@@ -14,7 +14,7 @@ const { eyebrow, title, smaller = false, class: className } = Astro.props;
     {
       eyebrow && (
         <h2>
-          <span class="block font-display text-base font-semibold text-neutral-950">
+          <span class="block font-display text-base font-semibold text-neutral-950 dark:text-white">
             {eyebrow}
           </span>
         </h2>
@@ -23,8 +23,8 @@ const { eyebrow, title, smaller = false, class: className } = Astro.props;
     <p
       class:list={[
         eyebrow
-          ? "mt-6 block font-display tracking-tight text-neutral-950"
-          : "font-display tracking-tight text-neutral-950",
+          ? "mt-6 block font-display tracking-tight text-neutral-950 dark:text-white"
+          : "font-display tracking-tight text-neutral-950 dark:text-white",
         smaller
           ? "text-2xl font-semibold"
           : "text-4xl font-medium sm:text-5xl",
@@ -34,7 +34,7 @@ const { eyebrow, title, smaller = false, class: className } = Astro.props;
     >
       {title}
     </p>
-    <div class="mt-6 text-xl text-neutral-600">
+    <div class="mt-6 text-xl text-neutral-600 dark:text-neutral-400">
       <slot />
     </div>
   </div>

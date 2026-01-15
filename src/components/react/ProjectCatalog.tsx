@@ -102,25 +102,28 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
             <FadeIn key={project.slug} className="flex">
               <article className="project-card">
                 {/* Project icon/initial */}
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-950">
-                  <span className="text-2xl font-semibold text-white">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-950 dark:bg-white">
+                  <span className="text-2xl font-semibold text-white dark:text-neutral-950">
                     {project.title.charAt(0).toUpperCase()}
                   </span>
                 </div>
 
                 {/* Date and type */}
-                <p className="mt-6 flex gap-x-2 text-sm text-neutral-950">
+                <p className="mt-6 flex gap-x-2 text-sm text-neutral-950 dark:text-white">
                   <time dateTime={project.updatedAt} className="font-semibold">
                     {formatDate(project.updatedAt)}
                   </time>
-                  <span className="text-neutral-300" aria-hidden="true">
+                  <span
+                    className="text-neutral-300 dark:text-neutral-600"
+                    aria-hidden="true"
+                  >
                     /
                   </span>
                   <span>{project.featured ? "Featured" : "Project"}</span>
                 </p>
 
                 {/* Title */}
-                <h3 className="mt-6 font-display text-2xl font-semibold text-neutral-950">
+                <h3 className="mt-6 font-display text-2xl font-semibold text-neutral-950 dark:text-white">
                   <a href={`/project/${project.slug}`}>
                     <span className="absolute inset-0 rounded-3xl" />
                     {project.title}
@@ -129,7 +132,7 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
 
                 {/* Description */}
                 {project.description && (
-                  <p className="mt-4 line-clamp-3 text-base text-neutral-600">
+                  <p className="mt-4 line-clamp-3 text-base text-neutral-600 dark:text-neutral-400">
                     {project.description}
                   </p>
                 )}
@@ -172,8 +175,8 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
         </FadeInStagger>
       ) : (
         <FadeIn>
-          <div className="flex flex-col items-center justify-center rounded-3xl bg-neutral-50 py-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
+          <div className="flex flex-col items-center justify-center rounded-3xl bg-neutral-50 py-16 text-center dark:bg-neutral-900">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800">
               <svg
                 className="h-6 w-6 text-neutral-500"
                 fill="none"
@@ -188,10 +191,10 @@ export default function ProjectCatalog({ projects }: ProjectCatalogProps) {
                 />
               </svg>
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-neutral-950">
+            <h3 className="mt-4 text-lg font-semibold text-neutral-950 dark:text-white">
               No projects found
             </h3>
-            <p className="mt-2 text-sm text-neutral-600">
+            <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
               Try adjusting your search query.
             </p>
             <button onClick={clearSearch} className="btn btn-secondary mt-4">
