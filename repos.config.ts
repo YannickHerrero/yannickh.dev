@@ -88,4 +88,16 @@ export const repos: RepoConfig[] = [
       "language-learning",
     ],
   },
+  {
+    owner: "YannickHerrero",
+    repo: "user-styles",
+    customTags: [
+      "userstyles",
+      "browser-extension",
+      "theming",
+      "base16",
+      "css",
+      "stylus",
+    ],
+  },
 ];
