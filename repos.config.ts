@@ -100,4 +100,9 @@ export const repos: RepoConfig[] = [
       "stylus",
     ],
   },
+  {
+    owner: "YannickHerrero",
+    repo: "kanitomo",
+    customTags: ["tui", "cli", "rust", "terminal", "virtual-pet", "git"],
+  },
 ];
