@@ -12,6 +12,8 @@ import ProjectContent from "./ProjectContent";
 import InfoContent, { type InfoPage } from "./InfoContent";
 import CommandPalette, { type Command } from "./CommandPalette";
 import HelpDialog from "./HelpDialog";
+import ThemePicker from "./ThemePicker";
+import { applyTheme, normalizeTheme, type ThemeId } from "../../data/themes";
 import { neighborPanel, type PanelDirection } from "./panel-navigation";
 import {
   desktopReducer,
@@ -54,7 +56,8 @@ export default function Desktop() {
   const [help, setHelp] = useState(false);
   const [leader, setLeader] = useState(false);
   const leaderArmed = useRef(false);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState<ThemeId>("dark");
+  const [themePicker, setThemePicker] = useState(false);
   const [opaque, setOpaque] = useState(false);
   const [split, setSplit] = useState(35);
   const [announcement, setAnnouncement] = useState("");
@@ -102,7 +105,7 @@ export default function Desktop() {
     );
     stateRef.current = next;
     setState(next);
-    setTheme(document.documentElement.dataset.theme ?? "dark");
+    setTheme(normalizeTheme(document.documentElement.dataset.theme));
     setOpaque(document.documentElement.dataset.opaque === "true");
     setReady(true);
     const restore = () => {
@@ -163,10 +166,10 @@ export default function Desktop() {
       if ((event.ctrlKey || event.metaKey) && key === "k") {
         event.preventDefault();
         cancelLeader();
-        if (!help) setPalette((value) => !value);
+        if (!help && !themePicker) setPalette((value) => !value);
         return;
       }
-      if (isTyping(event.target) || palette || help) {
+      if (isTyping(event.target) || palette || help || themePicker) {
         cancelLeader();
         return;
       }
@@ -181,6 +184,12 @@ export default function Desktop() {
       }
       if (leaderArmed.current) {
         cancelLeader();
+        if (!event.ctrlKey && !event.metaKey && !event.altKey && key === "w") {
+          event.preventDefault();
+          event.stopPropagation();
+          setThemePicker(true);
+          return;
+        }
         if (
           !event.ctrlKey &&
           !event.metaKey &&
@@ -215,18 +224,7 @@ export default function Desktop() {
       window.removeEventListener("blur", cancelLeader);
       window.removeEventListener("pointerdown", cancelLeader);
     };
-  }, [act, palette, help]);
-
-  function changeTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem("portfolio-theme", next);
-    } catch {
-      /* Optional preference. */
-    }
-  }
+  }, [act, palette, help, themePicker]);
   function changeOpacity() {
     const next = !opaque;
     setOpaque(next);
@@ -311,8 +309,8 @@ export default function Desktop() {
     {
       id: "theme",
       section: "Appearance",
-      label: `Switch to ${theme === "dark" ? "light" : "dark"} theme`,
-      run: changeTheme,
+      label: "Switch theme",
+      run: () => setThemePicker(true),
     },
     {
       id: "opacity",
@@ -694,7 +692,7 @@ export default function Desktop() {
         </span>
         {leader ? (
           <span className="leader-hint accent">
-            Ctrl+B → h left · j down · k up · l right
+            Ctrl+B → h j k l panels · w themes
           </span>
         ) : (
           <span className="footer-hints">
@@ -708,13 +706,23 @@ export default function Desktop() {
       </footer>
       <div role="status" className="sr-only">
         {leader
-          ? "Panel navigation: H left, J down, K up, L right. Escape to cancel."
+          ? "Leader: H left, J down, K up, L right, W themes. Escape to cancel."
           : announcement}
       </div>
       {palette && (
         <CommandPalette commands={commands} onClose={() => setPalette(false)} />
       )}
       {help && <HelpDialog onClose={() => setHelp(false)} />}
+      {themePicker && (
+        <ThemePicker
+          current={theme}
+          onSelect={(id) => {
+            setTheme(id);
+            applyTheme(id);
+          }}
+          onClose={() => setThemePicker(false)}
+        />
+      )}
     </div>
   );
 }

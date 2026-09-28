@@ -9,6 +9,31 @@ async function openCommands(
   await page.getByRole("combobox", { name: "Search commands" }).fill(query);
 }
 
+async function applyPickerTheme(
+  page: import("@playwright/test").Page,
+  name: string
+) {
+  await expect(
+    page.getByRole("dialog", { name: "Switch theme" })
+  ).toBeVisible();
+  for (
+    let i = 0;
+    i < 5 &&
+    !(await page
+      .getByRole("button", { name: `Apply ${name}`, exact: true })
+      .count());
+    i++
+  ) {
+    await page.getByRole("button", { name: "Next theme", exact: true }).click();
+  }
+  await page
+    .getByRole("button", { name: `Apply ${name}`, exact: true })
+    .click();
+  await expect(page.getByRole("dialog", { name: "Switch theme" })).toHaveCount(
+    0
+  );
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('.desktop[data-ready="true"]')).toBeVisible();
@@ -157,12 +182,12 @@ test("project commands have one descriptive entry and open alongside", async ({
   await openCommands(page, "Illium");
   await expect(page.getByRole("option")).toHaveCount(1);
   await page
-    .getByRole("option", { name: "Projects Illium - Desktop environment" })
+    .getByRole("option", { name: /Illium - Desktop environment/ })
     .click();
   await expect(page.locator("#window-illium")).toBeFocused();
   await openCommands(page, "Explorer");
   await page
-    .getByRole("option", { name: "Projects Explorer - Windows utility" })
+    .getByRole("option", { name: /Explorer - Windows utility/ })
     .click();
   await expect(page.locator("#window-explorer")).toBeFocused();
   await expect(page.locator(".detail-tile")).toHaveCount(2);
@@ -175,15 +200,16 @@ test("palette mouse selection, empty results, focus restoration and preferences"
   await expect(
     page.getByText("No commands found", { exact: false })
   ).toBeVisible();
-  await page.getByRole("combobox").fill("Switch to light");
-  await page.getByRole("option", { name: /Switch to light/ }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("combobox").fill("Switch theme");
+  await page.getByRole("option", { name: /Switch theme/ }).click();
+  await applyPickerTheme(page, "Catppuccin Latte");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "latte");
   await openCommands(page, "opaque");
   await page.getByRole("option", { name: /Use opaque/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-opaque", "true");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-opaque", "true");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "latte");
   await page.getByRole("button", { name: /Commands/ }).click();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: /Commands/ })).toBeFocused();
@@ -258,8 +284,9 @@ test("accessible home, project, palette and light theme", async ({ page }) => {
   await scan();
   await openCommands(page, "");
   await scan();
-  await page.getByRole("combobox").fill("Switch to light");
+  await page.getByRole("combobox").fill("Switch theme");
   await page.keyboard.press("Enter");
+  await applyPickerTheme(page, "Catppuccin Latte");
   await scan();
 });
 
@@ -305,9 +332,10 @@ test("small screens, blocked storage and reduced motion remain usable", async ({
       () => document.documentElement.scrollWidth <= innerWidth
     )
   ).toBe(true);
-  await openCommands(page, "light theme");
+  await openCommands(page, "Switch theme");
   await page.keyboard.press("Enter");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await applyPickerTheme(page, "Catppuccin Latte");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "latte");
 });
 
 test("direct URLs, no-JavaScript fallback and legacy pages", async ({

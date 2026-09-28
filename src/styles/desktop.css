@@ -18,11 +18,13 @@
   font-size: 10px;
   letter-spacing: 0.05em;
   margin-bottom: 16px;
-  text-shadow: 0 1px 8px #0009;
-  color: #cdd6f4;
+  color: var(--text);
+  background: rgba(var(--base), 0.8);
+  padding: 5px 8px;
+  border-radius: 2px;
 }
 .workspace-heading .accent {
-  color: #cba6f7;
+  color: var(--accent);
 }
 .window-switcher {
   display: flex;
@@ -33,9 +35,9 @@
 }
 .window-switcher button {
   font-size: 10px;
-  color: #cdd6f4;
-  background: #1e1e2ed9;
-  border: 1px solid #606178;
+  color: var(--text);
+  background: rgba(var(--base), 0.92);
+  border: 1px solid var(--line);
   padding: 5px 12px;
 }
 .window-switcher button[aria-pressed="true"] {

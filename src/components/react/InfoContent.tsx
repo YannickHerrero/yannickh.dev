@@ -81,6 +81,10 @@ export default function InfoContent({
             </dt>
             <dd>Focus the panel to the left, below, above or right</dd>
             <dt>
+              <kbd>Ctrl+B</kbd> then <kbd>w</kbd>
+            </dt>
+            <dd>Open the visual theme picker</dd>
+            <dt>
               <kbd>?</kbd>
             </dt>
             <dd>Open this help popup</dd>
@@ -99,14 +103,14 @@ export default function InfoContent({
             <dt>
               <kbd>Esc</kbd>
             </dt>
-            <dd>Dismiss the command palette or help popup</dd>
+            <dd>Dismiss the palette, help or theme picker</dd>
             <dt>
               <kbd>← →</kbd>
             </dt>
             <dd>Resize a focused window separator</dd>
           </dl>
           <p>
-            Ctrl+B is a prefix: release it, then press a direction within two
+            Ctrl+B is a prefix: release it, then press h/j/k/l or w within two
             seconds. Escape cancels it. It is inactive in text fields and
             dialogs. On mobile or with a maximized window, h/k go to the
             previous window and j/l to the next.
@@ -118,13 +122,21 @@ export default function InfoContent({
             small screens.
           </p>
           <p>
+            Choose “Switch theme” in Commands or press Ctrl+B, then W to browse
+            Original, Akane, Snow, Ruins and Catppuccin Latte. Use left/right
+            arrows or click a preview, then Enter or Apply to confirm. Escape
+            cancels without changing your theme.
+          </p>
+          <p>
             Prefer less transparency? Choose “Use opaque panels” in Commands.
             Your theme and transparency settings are saved on this device when
             storage is available.
           </p>
           <p className="muted">
-            The wallpaper is an original illustration. Theme colors follow
-            Illium&apos;s built-in Catppuccin Mocha and Latte palettes.
+            The default wallpaper is an original illustration. Other themes use
+            your selected Illium wallpapers; Ruins uses the cached Dynamic Dark
+            palette for ruins.jpg. Sources and attribution are documented in the
+            repository.
           </p>
         </>
       )}
