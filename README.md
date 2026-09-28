@@ -1,258 +1,109 @@
-# Project Catalog
+# Yannick's workspace
 
-A production-ready static website for showcasing curated GitHub repositories. Built with Astro, React, and Tailwind CSS.
+A personal portfolio styled as a small tiling desktop, inspired by [Illium](https://github.com/YannickHerrero/illium). Built with Astro, React and CSS Grid. Static pages remain available without JavaScript.
 
-## Features
+## The desktop
 
-- **100% Static Output** - Pre-rendered pages for maximum performance
-- **Build-time GitHub Sync** - All data fetched at build time, no runtime API calls
-- **Fuzzy Search** - Client-side search powered by Fuse.js
-- **Tag Filtering** - Filter projects by GitHub topics and custom tags
-- **Sorting** - Sort by stars, last updated, or name
-- **README Rendering** - Each project page displays the repository README with syntax highlighting
-- **Responsive Design** - Clean, mobile-first UI with Tailwind CSS
+- Original mountain wallpaper, 75%-opaque panel backgrounds and backdrop blur. Text and screenshots stay fully opaque.
+- Illium-inspired Catppuccin dark/light colors and a self-hosted JetBrains Mono font.
+- A project navigator, up to two detail windows, automatic tiling, maximize/restore and close controls.
+- A draggable and keyboard-adjustable navigator divider (25–55%). Detail windows stack on medium screens and sit side by side on wide screens.
+- A command palette for navigation, focusing windows, layout actions, theme and transparency preferences.
+- A single visible window with a window switcher on mobile. No forced horizontal scrolling.
+- Shareable desktop URLs, browser back/forward support and standalone `/work/:id` pages.
+- Original `/project/:slug` URLs are preserved as an archive, with repository READMEs available in an expandable section.
 
-## Quick Start
+## Run locally
 
-### Prerequisites
+Requires Bun 1.3.14 or later.
 
-- [Bun](https://bun.sh/) v1.0 or later
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd project-catalog
-
-# Install dependencies
+```sh
 bun install
-```
-
-### Development
-
-```bash
-# Sync GitHub data and start dev server
+# Recommended: export GITHUB_TOKEN in your shell for the build-time public GitHub sync.
 bun run dev
 ```
 
-This will:
+The dev server runs at `http://localhost:4321`. `dev` and `build` sync public GitHub repositories first. An unauthenticated cold sync can exceed GitHub's 60-request/hour limit. Use an environment token with read access only; never commit it. No token is sent to the browser.
 
-1. Fetch repository data from GitHub
-2. Generate static content files
-3. Start the Astro dev server at http://localhost:4321
+After the first sync, iterate without hitting GitHub:
 
-### Build for Production
+```sh
+bun run astro dev
+```
 
-```bash
-# Sync and build static site
+Production build and local preview:
+
+```sh
 bun run build
-
-# Preview the production build
 bun run preview
 ```
 
-## Adding Repositories
+## Editing the portfolio
 
-Edit `repos.config.ts` to add repositories to your catalog:
+The curated content lives in **`src/data/portfolio.ts`**, independently of GitHub popularity:
 
-```typescript
-import type { RepoConfig } from "./src/types";
+- `group` and array order control the navigator.
+- `summary`, `story` and `highlights` provide the editorial presentation.
+- `stack` and `status` describe the project without inferring maturity from push dates.
+- `repo` and `website` are optional, so products like Doku do not need a public repository.
+- Screenshots live in `public/images/`; sources and attribution are documented there.
 
-export const repos: RepoConfig[] = [
-  // Basic usage
-  {
-    owner: "facebook",
-    repo: "react",
-  },
+The selected projects are Illium, Sovereign, Aniplayer iOS, Explorer, Doku and miru, with Traki, Hibi and Solaris as additional work.
 
-  // With optional fields
-  {
-    owner: "vercel",
-    repo: "next.js",
-    featured: true, // Pin to top of list
-    customTags: ["framework"], // Add custom tags
-  },
-];
+`repos.config.ts` separately maintains the legacy GitHub archive. Retain old entries to keep existing inbound URLs working. `scripts/sync-github.ts` generates ignored content in `src/content/projects/` and metadata in `src/generated/`; API responses are cached in `.cache/`.
+
+## Keyboard and mouse
+
+| Action             | Keyboard                                           | Mouse / touch            |
+| ------------------ | -------------------------------------------------- | ------------------------ |
+| Commands           | `Ctrl+K` / `Cmd+K`, or `/` outside text fields     | Commands button          |
+| Navigate projects  | Tab, arrows, or `j` / `k` in the project list      | Click a project          |
+| Open project       | Enter                                              | Click its name           |
+| Open alongside     | “Open … alongside” command, or Tab to `+`          | `+` next to a project    |
+| Focus a window     | Tab or “Focus …” command                           | Window switcher or panel |
+| Maximize / restore | Window button or command                           | Title-bar square button  |
+| Close              | Window button or command                           | Title-bar `×`            |
+| Resize navigator   | Focus separator; left/right, Home/End, or commands | Drag separator           |
+| Dismiss palette    | Escape                                             | Close button or backdrop |
+| Help               | `?` outside text fields                            | Help link                |
+
+Normal project opens replace a detail window. “Alongside” keeps a second detail window; if both slots are already occupied, it replaces the second. The Home window cannot be closed. Each window's scroll region is keyboard-focusable.
+
+The palette uses a native modal dialog with focus containment and restoration. Theme and opacity preferences use local storage when available. “Use opaque panels” offers a no-blur, high-contrast alternative. Reduced-motion and reduced-transparency preferences are respected, and browsers without backdrop-filter support use opaque panels.
+
+## Validation
+
+```sh
+bun run lint
+bun run check
+bun run test
+bunx playwright install chromium
+bun run test:e2e
 ```
 
-### RepoConfig Options
+Run the GitHub sync at least once before the checks/build. Browser tests build and serve the static output, covering desktop and mobile mouse/keyboard navigation, focus restoration, tiling, resizing, history, preferences, blocked storage, small screens, no-JavaScript pages and axe accessibility checks. Screenshots and failure traces are written to ignored `test-results/`.
 
-| Field        | Type     | Required | Description                                 |
-| ------------ | -------- | -------- | ------------------------------------------- |
-| `owner`      | string   | Yes      | GitHub username or organization             |
-| `repo`       | string   | Yes      | Repository name                             |
-| `featured`   | boolean  | No       | Pin project to top of list                  |
-| `customTags` | string[] | No       | Additional tags to merge with GitHub topics |
-
-## GitHub Sync
-
-The sync script (`scripts/sync-github.ts`) handles all GitHub data fetching:
-
-### What It Does
-
-1. Reads repository list from `repos.config.ts`
-2. Fetches from GitHub API:
-   - Repository metadata (name, description, stars, etc.)
-   - Topics (used as tags)
-   - README content
-3. Processes README:
-   - Rewrites relative URLs to absolute GitHub URLs
-   - Preserves GitHub-flavored markdown
-4. Generates:
-   - `src/generated/projects.json` - Index for client-side search
-   - `src/content/projects/*.md` - Markdown files for each project
-
-### Running Manually
-
-```bash
-bun run sync:github
-```
-
-### Rate Limits
-
-Without authentication, GitHub allows 60 requests per hour. For higher limits, you need a GitHub Personal Access Token.
-
-#### Getting a GitHub Token
-
-1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
-2. Click **Generate new token** → **Generate new token (classic)**
-3. Give it a name like "project-catalog-sync"
-4. Select scope: **`public_repo`** (only needed for public repos)
-5. Click **Generate token** and copy it immediately
-
-#### Using the Token
-
-**Option 1: Environment variable**
-
-```bash
-export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-bun run build
-```
-
-**Option 2: Create `.env.local` file (recommended)**
-
-```bash
-cp .env.example .env.local
-# Edit .env.local and add your token
-```
-
-The `.env.local` file:
-
-```
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-```
-
-With a token, you get 5,000 requests per hour instead of 60.
-
-### Caching
-
-The sync script caches API responses in `.cache/` to:
-
-- Speed up development rebuilds
-- Reduce API calls
-- Use conditional requests (ETags) when possible
-
-Clear the cache to force fresh data:
-
-```bash
-rm -rf .cache
-```
-
-## Project Structure
-
-```
-project-catalog/
-├── repos.config.ts          # Your curated repo list
-├── scripts/
-│   └── sync-github.ts       # GitHub sync script
-├── src/
-│   ├── components/
-│   │   └── react/
-│   │       └── ProjectCatalog.tsx  # Search/filter React island
-│   ├── content/
-│   │   ├── config.ts        # Astro content collection schema
-│   │   └── projects/        # Generated: project markdown files
-│   ├── generated/
-│   │   └── projects.json    # Generated: search index
-│   ├── layouts/
-│   │   ├── BaseLayout.astro
-│   │   └── ProjectLayout.astro
-│   ├── pages/
-│   │   ├── index.astro      # Home page
-│   │   └── project/
-│   │       └── [slug].astro # Project detail pages
-│   ├── styles/
-│   │   └── global.css       # Tailwind + custom styles
-│   └── types/
-│       └── index.ts         # TypeScript types
-├── public/
-│   └── favicon.svg
-├── astro.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-└── package.json
-```
-
-## Available Scripts
-
-| Script                 | Description                 |
-| ---------------------- | --------------------------- |
-| `bun run dev`          | Sync + start dev server     |
-| `bun run build`        | Sync + build for production |
-| `bun run preview`      | Preview production build    |
-| `bun run sync:github`  | Sync GitHub data only       |
-| `bun run lint`         | Run ESLint                  |
-| `bun run lint:fix`     | Fix ESLint errors           |
-| `bun run format`       | Format with Prettier        |
-| `bun run format:check` | Check formatting            |
+CI runs the same checks on pull requests and pushes to `master`. The headless Chromium configuration avoids the host WSLg display to keep compositor frames reliable.
 
 ## Deployment
 
-### Vercel (Recommended)
+The output is static HTML in `dist/`, suitable for Vercel. Keep a build-time `GITHUB_TOKEN` configured for the archive sync. The existing daily rebuild workflow uses the `VERCEL_DEPLOY_HOOK` repository secret.
 
-1. Push your repository to GitHub
-2. Go to [Vercel](https://vercel.com) and click **Add New Project**
-3. Import your GitHub repository
-4. Vercel auto-detects Astro - settings are pre-configured in `vercel.json`
-5. **Add your GitHub token as an environment variable:**
-   - Go to **Settings** → **Environment Variables**
-   - Add: `GITHUB_TOKEN` = `ghp_xxxxxxxxxxxxxxxxxxxx`
-   - Select all environments (Production, Preview, Development)
-6. Click **Deploy**
+## Structure
 
-The build will automatically sync GitHub data and generate static pages.
-
-### Manual Deployment
-
-Build the static site:
-
-```bash
-bun run build
+```text
+src/data/portfolio.ts                    Curated project content
+src/components/react/Desktop.tsx         Desktop shell and input handling
+src/components/react/desktop-state.ts    Window state and URL serialization
+src/components/react/CommandPalette.tsx  Searchable command dialog
+src/components/react/ProjectContent.tsx  Shared project presentation
+src/components/react/InfoContent.tsx     About, contact and keyboard help
+src/styles/global.css                    Theme and shared presentation
+src/styles/desktop.css                   Tiling, palette and responsive layout
+src/pages/work/[id].astro                Static curated project pages
+src/pages/project/[slug].astro           Preserved legacy archive pages
 ```
-
-The output is in `dist/`. Deploy to any static hosting:
-
-- Netlify
-- Cloudflare Pages
-- GitHub Pages
-- AWS S3 + CloudFront
-
-## Environment Variables
-
-| Variable       | Required | Description                                          |
-| -------------- | -------- | ---------------------------------------------------- |
-| `GITHUB_TOKEN` | No       | GitHub PAT for higher rate limits (5000/hr vs 60/hr) |
-
-## Tech Stack
-
-- **Framework**: [Astro](https://astro.build/) v5
-- **UI Components**: [React](https://react.dev/) 19 (islands only)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v3
-- **Search**: [Fuse.js](https://www.fusejs.io/)
-- **Package Manager**: [Bun](https://bun.sh/)
-- **Syntax Highlighting**: [Shiki](https://shiki.matsu.io/) (built into Astro)
 
 ## License
 
-MIT
+MIT. See `public/images/README.md` for visual asset sources; artwork visible inside application screenshots belongs to its respective owners.
