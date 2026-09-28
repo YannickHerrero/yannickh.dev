@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { themes, type ThemeId } from "../../data/themes";
 import "../../styles/theme-picker.css";
 
@@ -24,11 +24,13 @@ export default function ThemePicker({
     onClose();
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
-    dialog.current?.showModal();
+    const modal = dialog.current;
+    modal?.showModal();
     stage.current?.focus();
     return () => {
+      modal?.close();
       previous?.focus();
     };
   }, []);

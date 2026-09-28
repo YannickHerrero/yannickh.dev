@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export interface Command {
   id: string;
@@ -28,11 +28,13 @@ export default function CommandPalette({
   );
   const index = Math.min(selected, Math.max(filtered.length - 1, 0));
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
-    dialog.current?.showModal();
+    const modal = dialog.current;
+    modal?.showModal();
     input.current?.focus();
     return () => {
+      modal?.close();
       previous?.focus();
     };
   }, []);

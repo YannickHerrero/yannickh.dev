@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -63,14 +64,25 @@ export default function Desktop() {
   const [announcement, setAnnouncement] = useState("");
   const workspace = useRef<HTMLDivElement>(null);
 
+  const [focusRequest, setFocusRequest] = useState<{
+    id: string;
+    returnToProject?: string;
+  } | null>(null);
   const focusPanel = useCallback((id: string, returnToProject?: string) => {
-    requestAnimationFrame(() => {
-      const projectLink = returnToProject
-        ? document.getElementById(`project-link-${returnToProject}`)
-        : null;
-      (projectLink ?? document.getElementById(`window-${id}`))?.focus();
-    });
+    setFocusRequest({ id, returnToProject });
   }, []);
+  // React may commit a new tile after the next animation frame under load.
+  // Apply focus only after the requested window is actually in the DOM.
+  useLayoutEffect(() => {
+    if (!focusRequest) return;
+    const projectLink = focusRequest.returnToProject
+      ? document.getElementById(`project-link-${focusRequest.returnToProject}`)
+      : null;
+    (
+      projectLink ?? document.getElementById(`window-${focusRequest.id}`)
+    )?.focus();
+    setFocusRequest(null);
+  }, [focusRequest]);
 
   const act = useCallback(
     (action: DesktopAction, moveFocus = true) => {

@@ -1,12 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import InfoContent from "./InfoContent";
 
 export default function HelpDialog({ onClose }: { onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
-    dialog.current?.showModal();
+    const modal = dialog.current;
+    modal?.showModal();
     return () => {
+      modal?.close();
       previous?.focus();
     };
   }, []);
