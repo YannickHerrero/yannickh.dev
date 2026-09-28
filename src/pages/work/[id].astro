@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectContent from "../../components/react/ProjectContent";
+import { portfolio } from "../../data/portfolio";
+export function getStaticPaths() {
+  return portfolio.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+const { project } = Astro.props;
+---
+
+<BaseLayout title={project.name} description={project.summary}>
+  <main id="main-content" class="static-page surface">
+    <div class="static-header">
+      <span>~/projects/{project.id}</span><a href={`/?panel=${project.id}`}
+        >Open in desktop ↗</a>
+    </div>
+    <ProjectContent project={project} heading="h1" />
+  </main>
+</BaseLayout>

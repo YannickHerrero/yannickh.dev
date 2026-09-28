@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InfoContent, { type InfoPage } from "../components/react/InfoContent";
+export function getStaticPaths() {
+  return ["about", "contact", "help"].map((page) => ({
+    params: { page },
+    props: { page },
+  }));
+}
+const { page } = Astro.props as { page: InfoPage };
+---
+
+<BaseLayout title={page.charAt(0).toUpperCase() + page.slice(1)}>
+  <main id="main-content" class="static-page surface">
+    <div class="static-header">
+      <span>~/{page}</span><a href={`/?panel=${page}`}>Open in desktop ↗</a>
+    </div>
+    <InfoContent page={page} heading="h1" />
+  </main>
+</BaseLayout>

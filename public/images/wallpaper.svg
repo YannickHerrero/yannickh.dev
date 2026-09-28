@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" fill="none">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1200" gradientUnits="userSpaceOnUse"><stop stop-color="#171b2b"/><stop offset=".55" stop-color="#434059"/><stop offset="1" stop-color="#9c777b"/></linearGradient>
+    <linearGradient id="ridge" x2="0" y1="500" y2="1200" gradientUnits="userSpaceOnUse"><stop stop-color="#33394c"/><stop offset="1" stop-color="#171e2b"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#f5c2e7" stop-opacity=".13"/><stop offset="1" stop-color="#f5c2e7" stop-opacity="0"/></radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".045"/></feComponentTransfer><feBlend in="SourceGraphic" mode="soft-light"/></filter>
+  </defs>
+  <g filter="url(#grain)">
+    <path fill="url(#sky)" d="M0 0h1920v1200H0z"/>
+    <ellipse fill="url(#glow)" cx="1430" cy="320" rx="590" ry="450"/>
+    <circle cx="1440" cy="265" r="63" fill="#f5e0dc" opacity=".75"/>
+    <path d="M0 755 190 588 310 660 570 370 720 560 865 453 1050 635 1190 540 1420 720 1630 500 1810 640 1920 565V1200H0Z" fill="#686079"/>
+    <path d="m310 660 260-290 150 190-160-115-84 128-49-16Z" fill="#a39aae" opacity=".45"/>
+    <path d="m865 453 185 182-202-97-97 49Z" fill="#afa0b0" opacity=".25"/>
+    <path d="M0 920 270 730 445 845 750 620 870 720 1040 685 1260 870 1580 640 1760 760 1920 695V1200H0Z" fill="url(#ridge)"/>
+    <path d="M0 1010 240 990 525 1105 860 898 1140 1020 1530 850 1920 910V1200H0Z" fill="#161f2b"/>
+    <g stroke="#cdd6f4" stroke-opacity=".055"><path d="m0 956 268-184 177 112 305-215 120 105 170-45 220 184 320-229 180 116 160-65"/><path d="m0 981 268-184 177 112 305-215 120 105 170-45 220 184 320-229 180 116 160-65"/></g>
+  </g>
+</svg>
