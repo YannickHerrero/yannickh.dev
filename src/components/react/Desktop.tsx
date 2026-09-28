@@ -12,6 +12,7 @@ import ProjectContent from "./ProjectContent";
 import InfoContent, { type InfoPage } from "./InfoContent";
 import CommandPalette, { type Command } from "./CommandPalette";
 import HelpDialog from "./HelpDialog";
+import { neighborPanel, type PanelDirection } from "./panel-navigation";
 import {
   desktopReducer,
   initialDesktop,
@@ -51,6 +52,8 @@ export default function Desktop() {
   const [ready, setReady] = useState(false);
   const [palette, setPalette] = useState(false);
   const [help, setHelp] = useState(false);
+  const [leader, setLeader] = useState(false);
+  const leaderArmed = useRef(false);
   const [theme, setTheme] = useState("dark");
   const [opaque, setOpaque] = useState(false);
   const [split, setSplit] = useState(35);
@@ -116,34 +119,103 @@ export default function Desktop() {
   }, [focusPanel]);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const cancelLeader = () => {
+      clearTimeout(timeout);
+      leaderArmed.current = false;
+      setLeader(false);
+    };
+    const movePanel = (direction: PanelDirection) => {
+      const current = stateRef.current;
+      const ids = ["home", ...current.panels];
+      const panels = ids.flatMap((id) => {
+        const rect = document
+          .getElementById(`window-${id}`)
+          ?.getBoundingClientRect();
+        return rect && rect.width > 0 && rect.height > 0
+          ? [
+              {
+                id,
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height,
+              },
+            ]
+          : [];
+      });
+      // Mobile and maximized layouts show one window at a time.
+      const next =
+        panels.length > 1
+          ? neighborPanel(panels, current.active, direction)
+          : ids[
+              ids.indexOf(current.active) +
+                (direction === "h" || direction === "k" ? -1 : 1)
+            ];
+      if (next) act({ type: "focus", id: next });
+    };
     const onKey = (event: KeyboardEvent) => {
-      if (event.isComposing) return;
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      if (event.isComposing) {
+        cancelLeader();
+        return;
+      }
+      const key = event.key.toLowerCase();
+      if ((event.ctrlKey || event.metaKey) && key === "k") {
         event.preventDefault();
+        cancelLeader();
         if (!help) setPalette((value) => !value);
         return;
       }
-      if (
-        isTyping(event.target) ||
-        event.ctrlKey ||
-        event.metaKey ||
-        event.altKey ||
-        palette ||
-        help
-      )
+      if (isTyping(event.target) || palette || help) {
+        cancelLeader();
         return;
-      if (event.key === "/") {
-        event.preventDefault();
-        setPalette(true);
       }
+      if (event.ctrlKey && !event.metaKey && !event.altKey && key === "b") {
+        event.preventDefault();
+        event.stopPropagation();
+        cancelLeader();
+        leaderArmed.current = true;
+        setLeader(true);
+        timeout = setTimeout(cancelLeader, 2000);
+        return;
+      }
+      if (leaderArmed.current) {
+        cancelLeader();
+        if (
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey &&
+          ["h", "j", "k", "l"].includes(key)
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          movePanel(key as PanelDirection);
+          return;
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+      }
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
       if (event.key === "?") {
         event.preventDefault();
         setHelp(true);
       }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [palette, help]);
+    // Capture the leader's second key before the project list's j/k handler.
+    window.addEventListener("keydown", onKey, true);
+    window.addEventListener("blur", cancelLeader);
+    window.addEventListener("pointerdown", cancelLeader);
+    return () => {
+      clearTimeout(timeout);
+      leaderArmed.current = false;
+      window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("blur", cancelLeader);
+      window.removeEventListener("pointerdown", cancelLeader);
+    };
+  }, [act, palette, help]);
 
   function changeTheme() {
     const next = theme === "dark" ? "light" : "dark";
@@ -436,7 +508,7 @@ export default function Desktop() {
                     className="text-button"
                     onClick={() => setPalette(true)}
                   >
-                    Find a project <kbd>/</kbd>
+                    Find a project <kbd>Ctrl K</kbd>
                   </button>
                 ) : (
                   <span className="muted">Explore my work ↘</span>
@@ -620,15 +692,24 @@ export default function Desktop() {
           <span className="accent">▦</span> Inspired by{" "}
           <a href="https://github.com/YannickHerrero/illium">Illium</a>
         </span>
-        <span className="footer-hints">
-          <kbd>tab</kbd> navigate <kbd>enter</kbd> open <kbd>/</kbd> commands
-        </span>
+        {leader ? (
+          <span className="leader-hint accent">
+            Ctrl+B → h left · j down · k up · l right
+          </span>
+        ) : (
+          <span className="footer-hints">
+            <kbd>ctrl/⌘ k</kbd> commands <kbd>ctrl b</kbd> then <kbd>hjkl</kbd>{" "}
+            panels
+          </span>
+        )}
         <a href="/help" onClick={(event) => openLink(event, "help")}>
           Help <kbd>?</kbd>
         </a>
       </footer>
       <div role="status" className="sr-only">
-        {announcement}
+        {leader
+          ? "Panel navigation: H left, J down, K up, L right. Escape to cancel."
+          : announcement}
       </div>
       {palette && (
         <CommandPalette commands={commands} onClose={() => setPalette(false)} />

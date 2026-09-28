@@ -1,10 +1,34 @@
 import { describe, expect, test } from "bun:test";
+import { neighborPanel } from "../src/components/react/panel-navigation";
 import {
   desktopReducer,
   initialDesktop,
   stateFromUrl,
   urlFromState,
 } from "../src/components/react/desktop-state";
+
+test("panel neighbors follow stacked and side-by-side geometry", () => {
+  const home = { id: "home", left: 0, top: 0, width: 400, height: 800 };
+  const first = { id: "illium", left: 410, top: 0, width: 600, height: 390 };
+  const second = {
+    id: "explorer",
+    left: 410,
+    top: 410,
+    width: 600,
+    height: 390,
+  };
+  expect(neighborPanel([home, first, second], "illium", "j")).toBe("explorer");
+  expect(neighborPanel([home, first, second], "explorer", "k")).toBe("illium");
+  expect(neighborPanel([home, first, second], "explorer", "h")).toBe("home");
+  expect(neighborPanel([home, first, second], "home", "h")).toBeUndefined();
+  expect(
+    neighborPanel(
+      [home, first, { ...second, left: 1020, top: 0 }],
+      "illium",
+      "l"
+    )
+  ).toBe("explorer");
+});
 
 describe("tiling state", () => {
   test("normal opens replace the focused detail; alongside keeps a second window", () => {

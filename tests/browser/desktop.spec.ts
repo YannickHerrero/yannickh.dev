@@ -74,7 +74,7 @@ test("mouse navigation, tiling, maximize, close and history", async ({
 test("keyboard-only project navigation and command actions", async ({
   page,
 }) => {
-  await page.keyboard.press("/");
+  await page.keyboard.press("Control+k");
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.type("Aniplayer iOS");
   await page.keyboard.press("Enter");
@@ -95,6 +95,38 @@ test("keyboard-only project navigation and command actions", async ({
   await expect(page.locator(".detail-tile")).toHaveCount(1);
   await page.keyboard.press("Escape");
   await expect(page.locator("#window-explorer")).toBeFocused();
+});
+
+test("leader directions focus panels without triggering list navigation", async ({
+  page,
+}) => {
+  await page.locator("#project-link-illium").click();
+  await expect(page.locator("#window-illium")).toBeFocused();
+  await page.keyboard.press("Control+b");
+  await expect(page.locator(".leader-hint")).toBeVisible();
+  await page.keyboard.press("h");
+  await expect(page.locator("#window-home")).toBeFocused();
+  await page.locator("#project-link-illium").focus();
+  await page.keyboard.press("Control+b");
+  await page.keyboard.press("l");
+  await expect(page.locator("#window-illium")).toBeFocused();
+  await page.keyboard.press("/");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.keyboard.press("Control+b");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".leader-hint")).toHaveCount(0);
+  await page.keyboard.press("h");
+  await expect(page.locator("#window-illium")).toBeFocused();
+  await page.keyboard.press("Control+b");
+  await expect(page.locator(".leader-hint")).toHaveCount(0, { timeout: 3000 });
+});
+
+test("leader is ignored inside the palette search", async ({ page }) => {
+  await openCommands(page, "");
+  await page.keyboard.press("Control+b");
+  await page.keyboard.type("hjkl/");
+  await expect(page.getByRole("combobox")).toHaveValue("hjkl/");
+  await expect(page.locator(".leader-hint")).toHaveCount(0);
 });
 
 test("help is a modal without changing windows or the URL", async ({

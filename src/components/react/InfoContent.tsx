@@ -77,9 +77,9 @@ export default function InfoContent({
             </dt>
             <dd>Open the command palette</dd>
             <dt>
-              <kbd>/</kbd>
+              <kbd>Ctrl+B</kbd> then <kbd>h j k l</kbd>
             </dt>
-            <dd>Open commands (outside text fields)</dd>
+            <dd>Focus the panel to the left, below, above or right</dd>
             <dt>
               <kbd>?</kbd>
             </dt>
@@ -105,6 +105,12 @@ export default function InfoContent({
             </dt>
             <dd>Resize a focused window separator</dd>
           </dl>
+          <p>
+            Ctrl+B is a prefix: release it, then press a direction within two
+            seconds. Escape cancels it. It is inactive in text fields and
+            dialogs. On mobile or with a maximized window, h/k go to the
+            previous window and j/l to the next.
+          </p>
           <p>
             Project commands open alongside the current project. You can also
             use the + button in the navigator. Focus, maximize, close and resize
