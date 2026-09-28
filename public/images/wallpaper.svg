@@ -3,9 +3,8 @@
     <linearGradient id="sky" x2="0" y2="1200" gradientUnits="userSpaceOnUse"><stop stop-color="#171b2b"/><stop offset=".55" stop-color="#434059"/><stop offset="1" stop-color="#9c777b"/></linearGradient>
     <linearGradient id="ridge" x2="0" y1="500" y2="1200" gradientUnits="userSpaceOnUse"><stop stop-color="#33394c"/><stop offset="1" stop-color="#171e2b"/></linearGradient>
     <radialGradient id="glow"><stop stop-color="#f5c2e7" stop-opacity=".13"/><stop offset="1" stop-color="#f5c2e7" stop-opacity="0"/></radialGradient>
-    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".045"/></feComponentTransfer><feBlend in="SourceGraphic" mode="soft-light"/></filter>
   </defs>
-  <g filter="url(#grain)">
+  <g>
     <path fill="url(#sky)" d="M0 0h1920v1200H0z"/>
     <ellipse fill="url(#glow)" cx="1430" cy="320" rx="590" ry="450"/>
     <circle cx="1440" cy="265" r="63" fill="#f5e0dc" opacity=".75"/>

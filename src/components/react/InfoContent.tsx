@@ -14,11 +14,12 @@ export default function InfoContent({
         <>
           <Heading>Always building something.</Heading>
           <p>
-            I'm a freelance dev based in France, obsessed with building things
-            and learning new stuff.
+            I&apos;m a freelance dev based in France, obsessed with building
+            things and learning new stuff.
           </p>
           <p>
-            If an idea gets stuck in my head, I'll probably end up building it.
+            If an idea gets stuck in my head, I&apos;ll probably end up building
+            it.
           </p>
           <p>
             These days, I mostly work with Rust, TypeScript, and Swift. I build
@@ -36,7 +37,7 @@ export default function InfoContent({
           </p>
           <div className="actions">
             <a className="action primary" href="mailto:hello@yannickh.dev">
-              Let's work together ↗
+              Let&apos;s work together ↗
             </a>
           </div>
         </>
@@ -45,8 +46,8 @@ export default function InfoContent({
         <>
           <Heading>Have something in mind?</Heading>
           <p>
-            I'm open to freelance opportunities. Tell me what you're building,
-            what you need help with, and where you want to take it.
+            I&apos;m open to freelance opportunities. Tell me what you&apos;re
+            building, what you need help with, and where you want to take it.
           </p>
           <div className="actions">
             <a className="action primary" href="mailto:hello@yannickh.dev">
@@ -116,7 +117,7 @@ export default function InfoContent({
           </p>
           <p className="muted">
             The wallpaper is an original illustration. Theme colors follow
-            Illium's built-in Catppuccin Mocha and Latte palettes.
+            Illium&apos;s built-in Catppuccin Mocha and Latte palettes.
           </p>
         </>
       )}
