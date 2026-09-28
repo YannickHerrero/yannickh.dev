@@ -33,5 +33,9 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Browser test artifacts
+playwright-report/
+test-results/
+
 # Vercel
 .vercel/
