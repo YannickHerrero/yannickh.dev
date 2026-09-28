@@ -52,7 +52,7 @@ test("keyboard-only project navigation and command actions", async ({
 }) => {
   await page.keyboard.press("/");
   await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.type("Open Aniplayer iOS");
+  await page.keyboard.type("Aniplayer iOS");
   await page.keyboard.press("Enter");
   await expect(page.locator("#window-aniplayer-ios")).toBeFocused();
   await page.keyboard.press("Control+k");
@@ -65,6 +65,23 @@ test("keyboard-only project navigation and command actions", async ({
   await expect(page.locator("#window-explorer")).toBeFocused();
   await page.keyboard.press("?");
   await expect(page.locator("#window-help")).toBeVisible();
+});
+
+test("project commands have one descriptive entry and open alongside", async ({
+  page,
+}) => {
+  await openCommands(page, "Illium");
+  await expect(page.getByRole("option")).toHaveCount(1);
+  await page
+    .getByRole("option", { name: "Projects Illium - Desktop environment" })
+    .click();
+  await expect(page.locator("#window-illium")).toBeFocused();
+  await openCommands(page, "Explorer");
+  await page
+    .getByRole("option", { name: "Projects Explorer - Windows utility" })
+    .click();
+  await expect(page.locator("#window-explorer")).toBeFocused();
+  await expect(page.locator(".detail-tile")).toHaveCount(2);
 });
 
 test("palette mouse selection, empty results, focus restoration and preferences", async ({

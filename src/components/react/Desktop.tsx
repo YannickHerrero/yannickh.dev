@@ -169,8 +169,8 @@ export default function Desktop() {
     ...portfolio.map((project) => ({
       id: `open-${project.id}`,
       section: "Projects",
-      label: `Open ${project.name}`,
-      run: () => act({ type: "open", id: project.id }),
+      label: `${project.name} - ${project.category}`,
+      run: () => act({ type: "open", id: project.id, alongside: true }),
     })),
     ...["about", "contact", "help"].map((id) => ({
       id,
@@ -183,12 +183,6 @@ export default function Desktop() {
       section: "Windows",
       label: `Focus ${titleFor(id)}`,
       run: () => act({ type: "focus", id }),
-    })),
-    ...portfolio.map((project) => ({
-      id: `alongside-${project.id}`,
-      section: "Tiling",
-      label: `Open ${project.name} alongside`,
-      run: () => act({ type: "open", id: project.id, alongside: true }),
     })),
     {
       id: "maximize",
