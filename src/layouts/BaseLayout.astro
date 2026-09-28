@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { themes } from "../data/themes";
 interface Props {
   title: string;
   description?: string;
@@ -24,11 +25,16 @@ const {
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} | Yannick Herrero</title>
-    <script is:inline>
+    <script
+      is:inline
+      define:vars={{ themeIds: themes.map((theme) => theme.id) }}
+    >
       try {
-        const theme = localStorage.getItem("portfolio-theme");
-        document.documentElement.dataset.theme =
-          theme === "light" ? "light" : "dark";
+        const stored = localStorage.getItem("portfolio-theme");
+        const theme = stored === "light" ? "latte" : stored;
+        document.documentElement.dataset.theme = themeIds.includes(theme)
+          ? theme
+          : "dark";
         document.documentElement.dataset.opaque =
           localStorage.getItem("portfolio-opaque") === "true"
             ? "true"

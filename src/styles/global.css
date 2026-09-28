@@ -4,8 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+.theme-preview[data-theme="dark"] {
   color-scheme: dark;
+  --wallpaper: url("/images/wallpaper.svg");
+  --wallpaper-shade: #14162118;
   --base: 30, 30, 46;
   --surface: #313244;
   --text: #cdd6f4;
@@ -16,8 +19,12 @@
   --alpha: 0.75;
   --blur: 22px;
 }
-:root[data-theme="light"] {
+/* Light foregrounds are deepened for contrast on 75%-opaque panels. */
+:root[data-theme="latte"],
+.theme-preview[data-theme="latte"] {
   color-scheme: light;
+  --wallpaper: url("/images/themes/latte.webp");
+  --wallpaper-shade: transparent;
   --base: 239, 241, 245;
   --surface: #dce0e8;
   --text: #303348;
@@ -25,6 +32,47 @@
   --accent: #62258f;
   --green: #326124;
   --line: #888a9d;
+}
+/* Illium Akane palette; secondary text is lifted for web contrast. */
+:root[data-theme="akane"],
+.theme-preview[data-theme="akane"] {
+  color-scheme: dark;
+  --base: 18, 16, 28;
+  --surface: #221c2c;
+  --text: #f0c4a8;
+  --muted: #c5a393;
+  --accent: #e15a48;
+  --green: #9ab57e;
+  --line: #8a6e6c;
+  --wallpaper: url("/images/themes/akane.webp");
+  --wallpaper-shade: #12101c18;
+}
+:root[data-theme="snow"],
+.theme-preview[data-theme="snow"] {
+  color-scheme: light;
+  --base: 255, 255, 255;
+  --surface: #f7f7f7;
+  --text: #0a0a0a;
+  --muted: #454545;
+  --accent: #0a0a0a;
+  --green: #0a0a0a;
+  --line: #919191;
+  --wallpaper: url("/images/themes/snow.webp");
+  --wallpaper-shade: transparent;
+}
+/* Exact Dynamic Dark colors from Illium's cached ruins.jpg palette. */
+:root[data-theme="ruins"],
+.theme-preview[data-theme="ruins"] {
+  color-scheme: dark;
+  --base: 16, 17, 24;
+  --surface: #1d1e28;
+  --text: #e9ebf3;
+  --muted: #a5a7b0;
+  --accent: #a9b1f7;
+  --green: #7fcb9e;
+  --line: #62687c;
+  --wallpaper: url("/images/themes/ruins.webp");
+  --wallpaper-shade: #10111818;
 }
 :root[data-opaque="true"] {
   --alpha: 1;
@@ -50,8 +98,8 @@
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(#14162118, #14162130),
-      url("/images/wallpaper.svg") center / cover;
+      linear-gradient(var(--wallpaper-shade), var(--wallpaper-shade)),
+      var(--wallpaper) center / cover;
   }
   button,
   input,
