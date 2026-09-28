@@ -55,21 +55,22 @@ The selected projects are Illium, Sovereign, Aniplayer iOS, Explorer, Doku and m
 
 ## Keyboard and mouse
 
-| Action             | Keyboard                                                    | Mouse / touch              |
-| ------------------ | ----------------------------------------------------------- | -------------------------- |
-| Commands           | `Ctrl+K` / `Cmd+K`                                          | Commands button            |
-| Navigate projects  | Tab, arrows, or `j` / `k` in the project list               | Click a project            |
-| Open project       | Enter                                                       | Click its name             |
-| Open alongside     | Select `Project name - category` in Commands, or Tab to `+` | Project command or `+`     |
-| Focus a window     | `Ctrl+B`, release, then `h/j/k/l`; Tab or “Focus …” command | Window switcher or panel   |
-| Switch theme       | `Ctrl+B`, release, then `w`; or “Switch theme” in Commands  | “Switch theme” in Commands |
-| Maximize / restore | Window button or command                                    | Title-bar square button    |
-| Close              | Window button or command                                    | Title-bar `×`              |
-| Resize navigator   | Focus separator; left/right, Home/End, or commands          | Drag separator             |
-| Dismiss popup      | Escape                                                      | Close button or backdrop   |
-| Help               | `?` outside text fields                                     | Help link                  |
+| Action             | Keyboard                                                           | Mouse / touch              |
+| ------------------ | ------------------------------------------------------------------ | -------------------------- |
+| Commands           | `Ctrl+K` / `Cmd+K`                                                 | Commands button            |
+| Navigate projects  | `j/k` or `↑/↓` anywhere in active Home; Home/End select first/last | Click a project            |
+| Scroll content     | `j/k`, `↑/↓`, PageUp/PageDown, Home/End in projects and help       | Mouse wheel / touch        |
+| Open project       | Enter                                                              | Click its name             |
+| Open alongside     | Select `Project name - category` in Commands, or Tab to `+`        | Project command or `+`     |
+| Focus a window     | `Ctrl+B`, release, then `h/j/k/l`; Tab or “Focus …” command        | Window switcher or panel   |
+| Switch theme       | `Ctrl+B`, release, then `w`; or “Switch theme” in Commands         | “Switch theme” in Commands |
+| Maximize / restore | Window button or command                                           | Title-bar square button    |
+| Close              | Window button or command                                           | Title-bar `×`              |
+| Resize navigator   | Focus separator; left/right, Home/End, or commands                 | Drag separator             |
+| Dismiss popup      | Escape                                                             | Close button or backdrop   |
+| Help               | `?` outside text fields                                            | Help link                  |
 
-Clicking a project in Home replaces a detail window. Each project has one descriptive palette entry, which opens it alongside the current project (like the `+` button); if both slots are occupied, the second is replaced. Home cannot be closed. Each window's scroll region is keyboard-focusable.
+Clicking a project in Home replaces a detail window. Each project has one descriptive palette entry, which opens it alongside the current project (like the `+` button); if both slots are occupied, the second is replaced. Home cannot be closed. Each window's scroll region is keyboard-focusable. Project navigation works immediately after page load or focusing Home, not only after tabbing to a project link. Home remembers the last focused project when switching panels. In a project or the help popup, `j/k` and arrows scroll only that content region, even when its header has focus. PageUp/PageDown scroll by a page; Home/End jump to the top/bottom. Text fields, palette search, modifier combinations and resize separators keep their own key handling.
 
 **Leader sequence:** press Ctrl+B, release it, then press H (left), J (down), K (up), L (right), or W (themes). The prefix expires after two seconds; Escape, a click or loss of window focus cancels it. Directional focus follows the actual panel geometry. On mobile or in maximized mode, H/K select the previous window and J/L the next. The handler consumes the second key before list navigation and never arms the prefix in text fields or dialogs. Browser shortcuts are intercepted only while focus is in the web page; extensions/OS-level reserved shortcuts may still take priority. `/` is no longer a shortcut.
 
