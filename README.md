@@ -5,7 +5,8 @@ A personal portfolio styled as a small tiling desktop, inspired by [Illium](http
 ## The desktop
 
 - Original mountain wallpaper, 75%-opaque panel backgrounds and backdrop blur. Text and screenshots stay fully opaque.
-- Illium-inspired Catppuccin dark/light colors and a self-hosted JetBrains Mono font.
+- Five visual themes: Original (default), Akane, Snow, Ruins and Catppuccin Latte, with a self-hosted JetBrains Mono font.
+- An Illium-style coverflow theme picker and modal keyboard help. Home fills the workspace when it is the only window.
 - A project navigator, up to two detail windows, automatic tiling, maximize/restore and close controls.
 - A draggable and keyboard-adjustable navigator divider (25–55%). Detail windows stack on medium screens and sit side by side on wide screens.
 - A command palette for navigation, focusing windows, layout actions, theme and transparency preferences.
@@ -54,22 +55,33 @@ The selected projects are Illium, Sovereign, Aniplayer iOS, Explorer, Doku and m
 
 ## Keyboard and mouse
 
-| Action             | Keyboard                                           | Mouse / touch            |
-| ------------------ | -------------------------------------------------- | ------------------------ |
-| Commands           | `Ctrl+K` / `Cmd+K`, or `/` outside text fields     | Commands button          |
-| Navigate projects  | Tab, arrows, or `j` / `k` in the project list      | Click a project          |
-| Open project       | Enter                                              | Click its name           |
-| Open alongside     | “Open … alongside” command, or Tab to `+`          | `+` next to a project    |
-| Focus a window     | Tab or “Focus …” command                           | Window switcher or panel |
-| Maximize / restore | Window button or command                           | Title-bar square button  |
-| Close              | Window button or command                           | Title-bar `×`            |
-| Resize navigator   | Focus separator; left/right, Home/End, or commands | Drag separator           |
-| Dismiss palette    | Escape                                             | Close button or backdrop |
-| Help               | `?` outside text fields                            | Help link                |
+| Action             | Keyboard                                                    | Mouse / touch              |
+| ------------------ | ----------------------------------------------------------- | -------------------------- |
+| Commands           | `Ctrl+K` / `Cmd+K`                                          | Commands button            |
+| Navigate projects  | Tab, arrows, or `j` / `k` in the project list               | Click a project            |
+| Open project       | Enter                                                       | Click its name             |
+| Open alongside     | Select `Project name - category` in Commands, or Tab to `+` | Project command or `+`     |
+| Focus a window     | `Ctrl+B`, release, then `h/j/k/l`; Tab or “Focus …” command | Window switcher or panel   |
+| Switch theme       | `Ctrl+B`, release, then `w`; or “Switch theme” in Commands  | “Switch theme” in Commands |
+| Maximize / restore | Window button or command                                    | Title-bar square button    |
+| Close              | Window button or command                                    | Title-bar `×`              |
+| Resize navigator   | Focus separator; left/right, Home/End, or commands          | Drag separator             |
+| Dismiss popup      | Escape                                                      | Close button or backdrop   |
+| Help               | `?` outside text fields                                     | Help link                  |
 
-Normal project opens replace a detail window. “Alongside” keeps a second detail window; if both slots are already occupied, it replaces the second. The Home window cannot be closed. Each window's scroll region is keyboard-focusable.
+Clicking a project in Home replaces a detail window. Each project has one descriptive palette entry, which opens it alongside the current project (like the `+` button); if both slots are occupied, the second is replaced. Home cannot be closed. Each window's scroll region is keyboard-focusable.
 
-The palette uses a native modal dialog with focus containment and restoration. Theme and opacity preferences use local storage when available. “Use opaque panels” offers a no-blur, high-contrast alternative. Reduced-motion and reduced-transparency preferences are respected, and browsers without backdrop-filter support use opaque panels.
+**Leader sequence:** press Ctrl+B, release it, then press H (left), J (down), K (up), L (right), or W (themes). The prefix expires after two seconds; Escape, a click or loss of window focus cancels it. Directional focus follows the actual panel geometry. On mobile or in maximized mode, H/K select the previous window and J/L the next. The handler consumes the second key before list navigation and never arms the prefix in text fields or dialogs. Browser shortcuts are intercepted only while focus is in the web page; extensions/OS-level reserved shortcuts may still take priority. `/` is no longer a shortcut.
+
+The palette, help and theme selector use native modal dialogs with focus containment and restoration. Theme and opacity preferences use local storage when available. “Use opaque panels” offers a no-blur, high-contrast alternative. Reduced-motion and reduced-transparency preferences are respected, and browsers without backdrop-filter support use opaque panels.
+
+## Themes
+
+`src/data/themes.ts` lists the themes and image paths; palette tokens live in `src/styles/global.css`. The default Original theme is retained for new visitors. Existing `light` preferences migrate to Catppuccin Latte.
+
+In the picker, left/right arrows or the arrow buttons browse the carousel. Clicking a visible preview selects it; Enter or Apply commits the choice. Escape cancels without changing the active theme. The choice persists across reloads and static project pages when browser storage is available.
+
+Only the first wallpaper from Akane, Snow and Latte is included. Ruins uses the user-selected `ruins.jpg` and Illium's matching cached Dynamic Dark palette, not the palette of whatever wallpaper is currently active. Full-size wallpapers and small picker previews are optimized separately. The previews are illustrative HTML layouts, not personal desktop screenshots. Attribution and remaining third-party artwork licensing uncertainties are recorded in `public/images/README.md`; those assets are not relicensed as MIT.
 
 ## Validation
 
@@ -93,6 +105,10 @@ The output is static HTML in `dist/`, suitable for Vercel. Keep a build-time `GI
 
 ```text
 src/data/portfolio.ts                    Curated project content
+src/data/themes.ts                       Theme catalog and preference helpers
+src/components/react/ThemePicker.tsx     Visual theme carousel
+src/components/react/HelpDialog.tsx      Keyboard help popup
+src/components/react/panel-navigation.ts Directional focus geometry
 src/components/react/Desktop.tsx         Desktop shell and input handling
 src/components/react/desktop-state.ts    Window state and URL serialization
 src/components/react/CommandPalette.tsx  Searchable command dialog
