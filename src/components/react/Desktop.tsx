@@ -36,7 +36,7 @@ function titleFor(id: string) {
 function isTyping(target: EventTarget | null) {
   return (
     target instanceof HTMLElement &&
-    !!target.closest('input, textarea, select, [contenteditable="true"]')
+    (target.isContentEditable || !!target.closest("input, textarea, select"))
   );
 }
 function plainClick(event: MouseEvent<HTMLAnchorElement>) {
@@ -63,6 +63,7 @@ export default function Desktop() {
   const [split, setSplit] = useState(35);
   const [announcement, setAnnouncement] = useState("");
   const workspace = useRef<HTMLDivElement>(null);
+  const lastProject = useRef<string | null>(null);
 
   const [focusRequest, setFocusRequest] = useState<{
     id: string;
@@ -220,12 +221,53 @@ export default function Desktop() {
         }
       }
       if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const separator =
+        event.target instanceof HTMLElement &&
+        event.target.closest('[role="separator"]');
+      if (
+        !event.shiftKey &&
+        !separator &&
+        stateRef.current.active === "home" &&
+        ["j", "k", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)
+      ) {
+        const links = Array.from(
+          document.querySelectorAll<HTMLAnchorElement>(
+            "#window-home .project-link"
+          )
+        );
+        if (!links.length) return;
+        const focused = links.indexOf(
+          document.activeElement as HTMLAnchorElement
+        );
+        const index =
+          focused >= 0
+            ? focused
+            : links.findIndex(
+                (link) => link.id === `project-link-${lastProject.current}`
+              );
+        const down = event.key === "j" || event.key === "ArrowDown";
+        const next =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? links.length - 1
+              : index < 0
+                ? down
+                  ? 0
+                  : links.length - 1
+                : (index + (down ? 1 : -1) + links.length) % links.length;
+        event.preventDefault();
+        event.stopPropagation();
+        links[next].focus({ preventScroll: true });
+        links[next].scrollIntoView({ block: "nearest", inline: "nearest" });
+        return;
+      }
       if (event.key === "?") {
         event.preventDefault();
         setHelp(true);
       }
     };
-    // Capture the leader's second key before the project list's j/k handler.
+    // Handle panel-wide navigation and consume leader sequences before local controls.
     window.addEventListener("keydown", onKey, true);
     window.addEventListener("blur", cancelLeader);
     window.addEventListener("pointerdown", cancelLeader);
@@ -524,41 +566,7 @@ export default function Desktop() {
                   <span className="muted">Explore my work ↘</span>
                 )}
               </div>
-              <div
-                className="project-navigator"
-                onKeyDown={(event) => {
-                  if (
-                    !["ArrowDown", "ArrowUp", "j", "k", "Home", "End"].includes(
-                      event.key
-                    ) ||
-                    isTyping(event.target) ||
-                    event.ctrlKey ||
-                    event.metaKey ||
-                    event.altKey
-                  )
-                    return;
-                  const links = Array.from(
-                    event.currentTarget.querySelectorAll<HTMLAnchorElement>(
-                      ".project-link"
-                    )
-                  );
-                  const index = links.indexOf(
-                    document.activeElement as HTMLAnchorElement
-                  );
-                  if (index < 0) return;
-                  event.preventDefault();
-                  const next =
-                    event.key === "Home"
-                      ? 0
-                      : event.key === "End"
-                        ? links.length - 1
-                        : (index +
-                            (["ArrowDown", "j"].includes(event.key) ? 1 : -1) +
-                            links.length) %
-                          links.length;
-                  links[next]?.focus();
-                }}
-              >
+              <div className="project-navigator">
                 {projectGroups.map((group) => (
                   <section
                     key={group}
@@ -579,6 +587,9 @@ export default function Desktop() {
                             className="project-link"
                             href={`/work/${project.id}`}
                             onClick={(event) => openLink(event, project.id)}
+                            onFocus={() => {
+                              lastProject.current = project.id;
+                            }}
                           >
                             <span className="project-cursor" aria-hidden="true">
                               {state.panels.includes(project.id) ? "▸" : "·"}

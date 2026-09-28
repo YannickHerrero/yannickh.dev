@@ -146,6 +146,31 @@ test("leader directions focus panels without triggering list navigation", async 
   await expect(page.locator(".leader-hint")).toHaveCount(0, { timeout: 3000 });
 });
 
+test("project navigation works immediately and after returning to Home", async ({
+  page,
+}) => {
+  await page.keyboard.press("j");
+  await expect(page.locator("#project-link-illium")).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator("#project-link-sovereign")).toBeFocused();
+  await page.keyboard.press("k");
+  await expect(page.locator("#project-link-illium")).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#window-illium")).toBeFocused();
+  await page.keyboard.press("Control+b");
+  await page.keyboard.press("h");
+  await expect(page.locator("#window-home")).toBeFocused();
+  await page.keyboard.press("j");
+  await expect(page.locator("#project-link-sovereign")).toBeFocused();
+  await page.locator("#window-home .tile-header").click();
+  await page.keyboard.press("ArrowUp");
+  await expect(page.locator("#project-link-illium")).toBeFocused();
+  await page.keyboard.press("End");
+  await expect(page.locator("#project-link-solaris")).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(page.locator("#project-link-illium")).toBeFocused();
+});
+
 test("leader is ignored inside the palette search", async ({ page }) => {
   await openCommands(page, "");
   await page.keyboard.press("Control+b");
