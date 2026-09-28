@@ -48,6 +48,6 @@ export default [
     },
   },
   {
-    ignores: ["dist/", "node_modules/", ".cache/", ".astro/", "src/generated/"],
+    ignores: ["dist/", "node_modules/", ".cache/", ".astro/", ".vercel/", "test-results/", "playwright-report/", "src/generated/"],
   },
 ];
