@@ -171,6 +171,56 @@ test("project navigation works immediately and after returning to Home", async (
   await expect(page.locator("#project-link-illium")).toBeFocused();
 });
 
+test("j/k and arrows scroll project content and help without scrolling other panels", async ({
+  page,
+}) => {
+  await page.setViewportSize({
+    width: page.viewportSize()!.width,
+    height: 620,
+  });
+  await page.locator("#project-link-aniplayer-ios").click();
+  await expect(page.locator("#window-aniplayer-ios")).toBeFocused();
+  const content = page.locator("#window-aniplayer-ios .tile-body");
+  const home = page.locator("#window-home .tile-body");
+  const homeScroll = await home.evaluate((element) => element.scrollTop);
+  const top = () => content.evaluate((element) => element.scrollTop);
+  await page.keyboard.press("j");
+  await expect.poll(top).toBe(64);
+  await page.keyboard.press("k");
+  await expect.poll(top).toBe(0);
+  await page.keyboard.press("ArrowDown");
+  await expect.poll(top).toBe(64);
+  await page.keyboard.press("ArrowUp");
+  await expect.poll(top).toBe(0);
+  await page.keyboard.press("PageDown");
+  await expect.poll(top).toBeGreaterThan(64);
+  await page.keyboard.press("End");
+  await expect.poll(top).toBeGreaterThan(64);
+  expect(await home.evaluate((element) => element.scrollTop)).toBe(homeScroll);
+  const panelScroll = await top();
+  await page.keyboard.press("?");
+  await expect(
+    page.getByRole("dialog", { name: "Keyboard & navigation" })
+  ).toBeVisible();
+  const helpTop = () =>
+    page.locator(".help-body").evaluate((element) => element.scrollTop);
+  await page.keyboard.press("j");
+  await expect.poll(helpTop).toBe(64);
+  await page.keyboard.press("ArrowDown");
+  await expect.poll(helpTop).toBe(128);
+  await page.keyboard.press("k");
+  await expect.poll(helpTop).toBe(64);
+  await page.keyboard.press("Home");
+  await expect.poll(helpTop).toBe(0);
+  await page.keyboard.press("PageDown");
+  await expect.poll(helpTop).toBeGreaterThan(64);
+  expect(await top()).toBe(panelScroll);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#window-aniplayer-ios")).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect.poll(top).toBe(0);
+});
+
 test("leader is ignored inside the palette search", async ({ page }) => {
   await openCommands(page, "");
   await page.keyboard.press("Control+b");

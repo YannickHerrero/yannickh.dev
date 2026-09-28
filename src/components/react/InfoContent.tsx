@@ -95,7 +95,20 @@ export default function InfoContent({
             <dt>
               <kbd>↑ ↓</kbd> / <kbd>j k</kbd>
             </dt>
-            <dd>Move through the project list</dd>
+            <dd>
+              Navigate projects in Home; scroll content in a project or this
+              popup
+            </dd>
+            <dt>
+              <kbd>PageUp / PageDown</kbd>
+            </dt>
+            <dd>Scroll project or help content by a page</dd>
+            <dt>
+              <kbd>Home / End</kbd>
+            </dt>
+            <dd>
+              First/last project in Home; top/bottom of project or help content
+            </dd>
             <dt>
               <kbd>Enter</kbd>
             </dt>

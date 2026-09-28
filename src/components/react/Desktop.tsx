@@ -16,6 +16,7 @@ import HelpDialog from "./HelpDialog";
 import ThemePicker from "./ThemePicker";
 import { applyTheme, normalizeTheme, type ThemeId } from "../../data/themes";
 import { neighborPanel, type PanelDirection } from "./panel-navigation";
+import { scrollContent } from "./scroll-content";
 import {
   desktopReducer,
   initialDesktop,
@@ -182,8 +183,25 @@ export default function Desktop() {
         if (!help && !themePicker) setPalette((value) => !value);
         return;
       }
-      if (isTyping(event.target) || palette || help || themePicker) {
+      if (isTyping(event.target) || palette || themePicker) {
         cancelLeader();
+        return;
+      }
+      if (help) {
+        cancelLeader();
+        if (
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey &&
+          !event.shiftKey &&
+          scrollContent(
+            document.querySelector<HTMLElement>(".help-body"),
+            event.key
+          )
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         return;
       }
       if (event.ctrlKey && !event.metaKey && !event.altKey && key === "b") {
@@ -260,6 +278,21 @@ export default function Desktop() {
         event.stopPropagation();
         links[next].focus({ preventScroll: true });
         links[next].scrollIntoView({ block: "nearest", inline: "nearest" });
+        return;
+      }
+      if (
+        !event.shiftKey &&
+        !separator &&
+        stateRef.current.active !== "home" &&
+        scrollContent(
+          document.querySelector<HTMLElement>(
+            `#window-${stateRef.current.active} .tile-body`
+          ),
+          event.key
+        )
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
         return;
       }
       if (event.key === "?") {
