@@ -14,11 +14,18 @@ import type { RepoConfig } from "./src/types";
  *   customTags: ["ui-library", "frontend"]
  * }
  */
+// Keep older entries to preserve published /project/ URLs. The desktop's
+// curated selection and editorial order live in src/data/portfolio.ts.
 export const repos: RepoConfig[] = [
+  ...["illium", "sovereign", "aniplayer-ios", "Explorer", "traki", "hibi"].map(
+    (repo) => ({
+      owner: "YannickHerrero",
+      repo,
+    })
+  ),
   {
     owner: "YannickHerrero",
     repo: "mira",
-    featured: true,
     customTags: [
       "media-streaming",
       "mobile",
