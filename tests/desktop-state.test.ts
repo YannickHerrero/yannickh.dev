@@ -43,8 +43,8 @@ describe("tiling state", () => {
     const state = stateFromUrl(
       "?panel=unknown&panel=illium&panel=illium&panel=help&panel=contact&active=unknown"
     );
-    expect(state.panels).toEqual(["illium", "help"]);
-    expect(state.active).toBe("help");
+    expect(state.panels).toEqual(["illium", "contact"]);
+    expect(state.active).toBe("contact");
     expect(stateFromUrl(urlFromState(state).slice(1))).toEqual(state);
     expect(desktopReducer(state, { type: "open", id: "unknown" })).toEqual(
       state

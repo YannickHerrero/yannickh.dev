@@ -83,7 +83,7 @@ export default function InfoContent({
             <dt>
               <kbd>?</kbd>
             </dt>
-            <dd>Open this help window</dd>
+            <dd>Open this help popup</dd>
             <dt>
               <kbd>Tab</kbd>
             </dt>
@@ -99,16 +99,17 @@ export default function InfoContent({
             <dt>
               <kbd>Esc</kbd>
             </dt>
-            <dd>Dismiss the command palette</dd>
+            <dd>Dismiss the command palette or help popup</dd>
             <dt>
               <kbd>← →</kbd>
             </dt>
             <dd>Resize a focused window separator</dd>
           </dl>
           <p>
-            Use “Alongside” to keep a second project open. Focus, maximize,
-            close and resize actions are also available from Commands. The
-            window switcher works on small screens.
+            Project commands open alongside the current project. You can also
+            use the + button in the navigator. Focus, maximize, close and resize
+            actions are available from Commands. The window switcher works on
+            small screens.
           </p>
           <p>
             Prefer less transparency? Choose “Use opaque panels” in Commands.

@@ -353,6 +353,30 @@
   margin: min(16vh, 120px) auto auto;
   overflow: auto;
 }
+.help-dialog {
+  margin: auto;
+  padding: 0;
+  width: min(740px, calc(100% - 24px));
+  max-height: calc(100dvh - 32px);
+  color: var(--text);
+  background: rgb(var(--base));
+  border: 1px solid var(--accent);
+  box-shadow: 0 24px 100px #0005;
+  overflow: hidden;
+}
+.help-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 36px);
+}
+.help-body {
+  overflow: auto;
+  min-height: 0;
+}
+.help-dialog .help-list {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+}
+.help-dialog::backdrop,
 .command-dialog::backdrop {
   background: #11111b80;
   backdrop-filter: blur(8px);

@@ -88,7 +88,35 @@ test("keyboard-only project navigation and command actions", async ({
   await page.keyboard.press("Enter");
   await expect(page.locator("#window-explorer")).toBeFocused();
   await page.keyboard.press("?");
-  await expect(page.locator("#window-help")).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "Keyboard & navigation" })
+  ).toBeVisible();
+  await expect(page.locator("#window-help")).toHaveCount(0);
+  await expect(page.locator(".detail-tile")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#window-explorer")).toBeFocused();
+});
+
+test("help is a modal without changing windows or the URL", async ({
+  page,
+}) => {
+  await page.locator("#project-link-illium").click();
+  await expect(page.locator("#window-illium")).toBeFocused();
+  const url = page.url();
+  await page.getByRole("link", { name: "Help ?" }).click();
+  const dialog = page.getByRole("dialog", { name: "Keyboard & navigation" });
+  await expect(dialog).toBeVisible();
+  await expect(page).toHaveURL(url);
+  await expect(page.locator(".detail-tile")).toHaveCount(1);
+  expect(
+    (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
+      .violations
+  ).toEqual([]);
+  await page.getByRole("button", { name: "Close help" }).click();
+  await expect(page.getByRole("link", { name: "Help ?" })).toBeFocused();
+  await openCommands(page, "Keyboard help");
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
 });
 
 test("project commands have one descriptive entry and open alongside", async ({

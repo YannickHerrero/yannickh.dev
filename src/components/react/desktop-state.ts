@@ -3,7 +3,6 @@ import { portfolio } from "../../data/portfolio";
 export const validPanels = new Set([
   "about",
   "contact",
-  "help",
   ...portfolio.map((p) => p.id),
 ]);
 export interface DesktopState {

@@ -11,6 +11,7 @@ import { findProject, portfolio, projectGroups } from "../../data/portfolio";
 import ProjectContent from "./ProjectContent";
 import InfoContent, { type InfoPage } from "./InfoContent";
 import CommandPalette, { type Command } from "./CommandPalette";
+import HelpDialog from "./HelpDialog";
 import {
   desktopReducer,
   initialDesktop,
@@ -49,6 +50,7 @@ export default function Desktop() {
   const stateRef = useRef(state);
   const [ready, setReady] = useState(false);
   const [palette, setPalette] = useState(false);
+  const [help, setHelp] = useState(false);
   const [theme, setTheme] = useState("dark");
   const [opaque, setOpaque] = useState(false);
   const [split, setSplit] = useState(35);
@@ -92,6 +94,9 @@ export default function Desktop() {
 
   useEffect(() => {
     const next = stateFromUrl(location.search);
+    setHelp(
+      new URLSearchParams(location.search).getAll("panel").includes("help")
+    );
     stateRef.current = next;
     setState(next);
     setTheme(document.documentElement.dataset.theme ?? "dark");
@@ -99,6 +104,9 @@ export default function Desktop() {
     setReady(true);
     const restore = () => {
       const restored = stateFromUrl(location.search);
+      setHelp(
+        new URLSearchParams(location.search).getAll("panel").includes("help")
+      );
       stateRef.current = restored;
       setState(restored);
       focusPanel(restored.active);
@@ -112,7 +120,7 @@ export default function Desktop() {
       if (event.isComposing) return;
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setPalette((value) => !value);
+        if (!help) setPalette((value) => !value);
         return;
       }
       if (
@@ -120,7 +128,8 @@ export default function Desktop() {
         event.ctrlKey ||
         event.metaKey ||
         event.altKey ||
-        palette
+        palette ||
+        help
       )
         return;
       if (event.key === "/") {
@@ -129,12 +138,12 @@ export default function Desktop() {
       }
       if (event.key === "?") {
         event.preventDefault();
-        act({ type: "open", id: "help" });
+        setHelp(true);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [act, palette]);
+  }, [palette, help]);
 
   function changeTheme() {
     const next = theme === "dark" ? "light" : "dark";
@@ -159,7 +168,8 @@ export default function Desktop() {
   function openLink(event: MouseEvent<HTMLAnchorElement>, id: string) {
     if (!plainClick(event)) return;
     event.preventDefault();
-    act({ type: "open", id });
+    if (id === "help") setHelp(true);
+    else act({ type: "open", id });
   }
   function resize(value: number) {
     setSplit(Math.max(25, Math.min(55, value)));
@@ -172,7 +182,13 @@ export default function Desktop() {
       label: `${project.name} - ${project.category}`,
       run: () => act({ type: "open", id: project.id, alongside: true }),
     })),
-    ...["about", "contact", "help"].map((id) => ({
+    {
+      id: "help",
+      section: "Navigate",
+      label: "Keyboard help",
+      run: () => setHelp(true),
+    },
+    ...["about", "contact"].map((id) => ({
       id,
       section: "Navigate",
       label: `Open ${titleFor(id)}`,
@@ -617,6 +633,7 @@ export default function Desktop() {
       {palette && (
         <CommandPalette commands={commands} onClose={() => setPalette(false)} />
       )}
+      {help && <HelpDialog onClose={() => setHelp(false)} />}
     </div>
   );
 }
