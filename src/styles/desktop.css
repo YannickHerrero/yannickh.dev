@@ -55,8 +55,6 @@
 }
 .workspace[data-count="0"] {
   display: block;
-  max-width: 1120px;
-  margin: 0 auto;
 }
 .workspace[data-count="0"] .home-tile {
   height: 100%;

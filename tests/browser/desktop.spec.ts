@@ -14,6 +14,30 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('.desktop[data-ready="true"]')).toBeVisible();
 });
 
+test("Home fills the available workspace with left-aligned content", async ({
+  page,
+}) => {
+  const main = await page.locator(".desktop-main").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      width:
+        element.clientWidth -
+        parseFloat(style.paddingLeft) -
+        parseFloat(style.paddingRight),
+      left:
+        element.getBoundingClientRect().left + parseFloat(style.paddingLeft),
+    };
+  });
+  const home = await page.locator("#window-home").boundingBox();
+  expect(home!.width).toBeCloseTo(main.width, 0);
+  expect(home!.x).toBeCloseTo(main.left, 0);
+  expect(
+    await page
+      .locator(".home-content")
+      .evaluate((element) => getComputedStyle(element).textAlign)
+  ).not.toBe("center");
+});
+
 test("mouse navigation, tiling, maximize, close and history", async ({
   page,
 }, info) => {
